@@ -1,8 +1,14 @@
-import { Schema, Document, model } from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
+
+export interface OnboardingStepInfo {
+    step: Schema.Types.ObjectId;
+    order: number;
+}
 
 export interface OnboardingWorkflow  {
     title: string;
     overview: string;
+    steps: OnboardingStepInfo[];
 }
 
 class OnboardingWorkflowModel {
@@ -16,6 +22,19 @@ class OnboardingWorkflowModel {
                 type: String,
                 required: true,
             },
+            steps: [
+                {
+                    step: {
+                        type: Schema.Types.ObjectId,
+                        ref: 'OnboardingStep',
+                        required: true,
+                    },
+                    order: {
+                        type: Number,
+                        required: true,
+                    }
+                }
+            ]
         },
         { timestamps: true },
     );

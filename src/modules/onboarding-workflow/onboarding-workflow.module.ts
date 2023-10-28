@@ -1,14 +1,15 @@
 import { Module } from '@nestjs/common';
 import { OnboardingWorkflowRepo } from './repository/onboarding-workflow.repository';
 import { OnboardingWorkflowService } from './services/onboarding-workflow.service';
-// import { OnboardingWorkflowController } from './onboarding-workflow.controller';
+import { InjectionTokens } from 'src/libs/common/types/enum';
+import { OnboardingWorkflowController } from './onboarding-workflow.controller';
 
 @Module({
-//   controllers: [OnboardingWorkflowController],
+  controllers: [OnboardingWorkflowController],
   providers: [
     OnboardingWorkflowService,
     {
-      provide: 'OnboardingWorkflowRepo', 
+      provide: InjectionTokens.OnboardingWorkflowRepo, 
       useClass: OnboardingWorkflowRepo,
     },
   ],

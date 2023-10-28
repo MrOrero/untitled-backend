@@ -6,6 +6,7 @@ export class OnboardingWorkflowMap{
         return {
             title: onboardingWorkflow.title,
             overview: onboardingWorkflow.overview,
+            steps: onboardingWorkflow.steps,
         };
     }
 }
