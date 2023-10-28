@@ -13,17 +13,22 @@ export class OnboardingWorkflowService {
 
   async createWorkflow(dto: AddWorkFlowDto) {
 
-    const newWorkfloworError = OnboardingWorkflowDomain.create(dto);
+    try {
+      const newWorkfloworError = OnboardingWorkflowDomain.create(dto);
    
-    if(newWorkfloworError.isFailure) {
-      throw new BadRequestException(newWorkfloworError.errorValue());
+      if(newWorkfloworError.isFailure) {
+        throw new BadRequestException(newWorkfloworError.errorValue());
+      }
+  
+      const newWorkflow = newWorkfloworError.getValue();
+  
+      const data = OnboardingWorkflowMap.toPersistence(newWorkflow);
+     
+      return this.onboardingWorkflowRepo.save(data);
+    } catch (error) {
+      console.log(error);
     }
 
-    const newWorkflow = newWorkfloworError.getValue();
-
-    const data = OnboardingWorkflowMap.toPersistence(newWorkflow);
-   
-    return this.onboardingWorkflowRepo.save(data);
   }
 
 //   async getWorkflowById(id: string): Promise<OnboardingWorkflow | null> {
@@ -32,27 +37,27 @@ export class OnboardingWorkflowService {
 //   }
 
   async getAllWorkflows(): Promise<any> {
-    const workflows = await this.onboardingWorkflowRepo.findPaginated(10, 1 , {}, {
-      path: 'steps.step',
-      populate: {
-        path: 'data',
-      } 
-    });
-    return workflows;
+    try {
+      const workflows = await this.onboardingWorkflowRepo.findPaginated(10, 1 , {}, {
+        path: 'steps.step',
+        populate: {
+          path: 'data',
+        } 
+      });
+      return workflows;
+      
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async addStepToWorkflow(workflowId: string, stepId: string) {
-    // const workflow = await this.onboardingWorkflowRepo.findOne({ _id: workflowId });
-    // if(!workflow) {
-    //   throw new BadRequestException('Workflow not found');
-    // }
-    // const step = await this.onboardingWorkflowRepo.findOne({ _id: stepId });
-    // if(!step) {
-    //   throw new BadRequestException('Step not found');
-    // }
-    // workflow.steps.push({ step: stepId });
-    // await workflow.save();
-    // return workflow;
+    console.log(workflowId, stepId);
+    try {
+      return this.onboardingWorkflowRepo.addStepToWorkflow(workflowId, stepId);
+    } catch (error) {
+      console.log(error);
+    }
   }
   // async updateWorkflow(id: string, title: string, overview: string): Promise<OnboardingWorkflow | null> {
   //   const updatedWorkflow = await this.onboardingWorkflowRepo.findOneAndUpdate(
