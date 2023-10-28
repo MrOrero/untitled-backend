@@ -14,7 +14,7 @@ export abstract class AbstractRepo<T> {
     return count > 0;
   }
 
-  async findOne(where: Record<string, any>): Promise<T | null> {
+  async findOne(where: Record<string, any>) {
     const entity = await this.model.findOne(where).exec();
     return entity;
   }
@@ -22,7 +22,7 @@ export abstract class AbstractRepo<T> {
   async findOneAndUpdate(
     where: Record<string, any>,
     partialEntity: Record<string, any>,
-  ): Promise<T | null> {
+  ) {
     const updatedEntity = await this.model
       .findOneAndUpdate(where, partialEntity, { new: true })
       .exec();
@@ -60,7 +60,7 @@ export abstract class AbstractRepo<T> {
   async find(
     where: Record<string, any>,
     order: Record<string, any> = {},
-  ): Promise<T[]> {
+  ) {
     return this.model.find(where).sort(order).exec();
   }
 
