@@ -14,24 +14,37 @@ export abstract class AbstractRepo<T> {
     return count > 0;
   }
 
-  async findOne(where: Record<string, any>): Promise<T | null> {
+  async findOne(where: Record<string, any>) {
     const entity = await this.model.findOne(where).exec();
     return entity;
   }
 
-  async findOneAndUpdate(where: Record<string, any>, partialEntity: Record<string, any>): Promise<T | null> {
-    const updatedEntity = await this.model.findOneAndUpdate(where, partialEntity, { new: true }).exec();
+  async findOneAndUpdate(
+    where: Record<string, any>,
+    partialEntity: Record<string, any>,
+  ) {
+    const updatedEntity = await this.model
+      .findOneAndUpdate(where, partialEntity, { new: true })
+      .exec();
     if (!updatedEntity) {
-      console.warn("Entity not found with where", where);
+      console.warn('Entity not found with where', where);
       return null; // Or throw an error
     }
     return updatedEntity;
   }
 
-  async findPaginated(pageSize = 10, currentPage = 1, where: Record<string, any> = {}): Promise<{ data: T[], pagination: { total: number, pageSize: number, currentPage: number } }> {
+  async findPaginated(
+    pageSize = 10,
+    currentPage = 1,
+    where: Record<string, any> = {},
+    relation?: any
+  ): Promise<{
+    data: T[];
+    pagination: PaginatedData;
+  }> {
     const offset = (currentPage - 1) * pageSize;
     const [data, total] = await Promise.all([
-      this.model.find(where).limit(pageSize).skip(offset).exec(),
+      this.model.find(where).limit(pageSize).skip(offset).populate(relation).exec(),
       this.model.countDocuments(where),
     ]);
     return {
@@ -44,11 +57,16 @@ export abstract class AbstractRepo<T> {
     };
   }
 
-  async find(where: Record<string, any>, order: Record<string, any> = {}): Promise<T[]> {
+  async find(
+    where: Record<string, any>,
+    order: Record<string, any> = {},
+  ) {
     return this.model.find(where).sort(order).exec();
   }
 
-  async findOneAndDelete(where: Record<string, any>): Promise<{ status: boolean }> {
+  async findOneAndDelete(
+    where: Record<string, any>,
+  ): Promise<{ status: boolean }> {
     const res = await this.model.deleteOne(where).exec();
     return {
       status: res.deletedCount > 0,

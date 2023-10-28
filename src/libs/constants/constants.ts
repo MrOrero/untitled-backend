@@ -28,7 +28,3 @@ export const Events = {
   CONTRACT_APPROACHING_EXPIRATION: "contract-approaching-expiration",
   NOTIFICATION_FOR_CONTRACT_APPROACHING_EXPIRATION: "notification-for-contract-approaching-expiration",
 };
-
-export enum InjectionTokens {
-  EMAIL_CLIENT = "EMAIL_CLIENT",
-}

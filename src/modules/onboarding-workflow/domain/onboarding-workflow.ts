@@ -2,23 +2,17 @@ import {
     IsString,
     IsNotEmpty,
   } from "class-validator";
+import { Schema } from "mongoose";
 import { BaseAggregateRoot } from "src/libs/domain/BaseAggregateRoot";
   import { Guard } from "src/libs/domain/logic/Guard";
   import { Result } from "src/libs/domain/logic/Result";
+import { AddWorkFlowDto } from "../dtos/AddWorkFlowDto";
+import { OnboardingStepInfo } from "../model/onboarding-workflow.model";
   
   export interface OnboardingWorkflowProps {
     title: string;
     overview: string;
-  }
-  
-  export class OnboardingWorkflowValidation {
-    @IsString()
-    @IsNotEmpty()
-    title: string;
-  
-    @IsString()
-    @IsNotEmpty()
-    overview: string;
+    steps: OnboardingStepInfo[];
   }
   
   export class OnboardingWorkflowDomain extends BaseAggregateRoot<OnboardingWorkflowProps> {
@@ -31,20 +25,24 @@ import { BaseAggregateRoot } from "src/libs/domain/BaseAggregateRoot";
     }
   
     get title(): string {
-      return this.props.title.replace(/[^a-zA-Z0-9\s]/g, "");
+      return this.props.title;
     }
   
     get overview(): string {
       return this.props.overview;
+    }
+
+    get steps(): any {
+        return this.props.steps;
     }
   
     public static create(
       props: OnboardingWorkflowProps,
     ): Result<OnboardingWorkflowDomain> {
       const guardResult = Guard.validate<
-        OnboardingWorkflowValidation,
+        AddWorkFlowDto,
         OnboardingWorkflowProps
-      >(OnboardingWorkflowValidation, props);
+      >(AddWorkFlowDto, props);
   
       if (guardResult) {
         return Result.fail<OnboardingWorkflowDomain>(guardResult.errMsg);
