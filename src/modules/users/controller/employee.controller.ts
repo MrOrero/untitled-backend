@@ -7,6 +7,7 @@ import {
   Body,
   BadRequestException,
   UseGuards,
+  HttpCode,
 } from '@nestjs/common';
 import { EmployeeService } from '../services/employee.service';
 import { LocalAuthGuard } from '../../auth/guards/local-auth.guard';
@@ -45,8 +46,8 @@ export class EmployeeController {
     }
   }
 
-  @UseGuards(LocalAuthGuard)
   @Post('login')
+  @HttpCode(200)
   async login(@Body() loginData: any) {
     const { email, password } = loginData;
 
@@ -64,6 +65,7 @@ export class EmployeeController {
     return employees;
   }
 
+  @UseGuards(LocalAuthGuard)
   @Get(':id')
   async getEmployeeById(@Param('id') employeeId: string) {
     const employee = await this.employeeService.getEmployeeById(employeeId);

@@ -6,8 +6,9 @@ import {
   Param,
   Body,
   BadRequestException,
-  UseGuards,
+  HttpCode,
 } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { CompanyService } from '../services/company.service';
 import { LocalAuthGuard } from '../../auth/guards/local-auth.guard';
 
@@ -34,14 +35,16 @@ export class CompanyController {
     }
   }
 
-  @UseGuards(LocalAuthGuard)
   @Post('login')
+  @HttpCode(200)
   async login(@Body() loginData: any) {
     const { email, password } = loginData;
-
     try {
-      const company = await this.companyService.login(email, password);
-      return company;
+      const result = await this.companyService.login(email, password);
+      if (!result) {
+        throw new BadRequestException('Invalid email or password');
+      }
+      return result;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -53,6 +56,7 @@ export class CompanyController {
     return companies;
   }
 
+  @UseGuards(LocalAuthGuard)
   @Get(':id')
   async getCompanyById(@Param('id') companyId: string) {
     const company = await this.companyService.getCompanyById(companyId);

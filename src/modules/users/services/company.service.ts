@@ -4,6 +4,8 @@ import { CompanyRepo } from '../repository/company.repository';
 import { CompanyDomain } from '../domain/company';
 import { CompanyMap } from '../mappers/companyMap';
 import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
+//import { createToken } from 'src/libs/utils/createToken';
 
 @Injectable()
 export class CompanyService {
@@ -46,21 +48,29 @@ export class CompanyService {
     return this.companyRepo.save(data);
   }
 
-  async login(email: string, password: string): Promise<Company | null> {
-    const company = await this.companyRepo.findCompanyByEmail(email);
+  async login(
+    email: string,
+    password: string,
+  ): Promise<{ token: string; company: Company } | null> {
+    const company = await this.findByEmail(email);
     if (!company) {
-      throw new BadRequestException('Invalid email or password');
+      throw new BadRequestException('Invalid credentials');
     }
 
-    const passwordMatch = await this.comparePassword(
+    const passwordValid = await this.comparePassword(
       password,
       company.password,
     );
-    if (!passwordMatch) {
-      throw new BadRequestException('Invalid email or password');
+
+    if (!passwordValid) {
+      throw new BadRequestException('Invalid credentials');
     }
 
-    return company;
+    const token = jwt.sign({ sub: company._id }, process.env.JWT_SECRET, {
+      expiresIn: '1h',
+    });
+
+    return { token, company };
   }
 
   async findByEmail(email: string): Promise<Company | null> {

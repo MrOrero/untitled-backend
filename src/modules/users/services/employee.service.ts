@@ -4,6 +4,8 @@ import { EmployeeRepo } from '../repository/employee.repository';
 import { EmployeeDomain } from '../domain/employee';
 import { EmployeeMap } from '../mappers/employeeMap';
 import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
+//import { createToken } from 'src/libs/utils/createToken';
 @Injectable()
 export class EmployeeService {
   constructor(
@@ -49,7 +51,10 @@ export class EmployeeService {
     return this.employeeRepo.save(data);
   }
 
-  async login(email: string, password: string): Promise<Employee | null> {
+  async login(
+    email: string,
+    password: string,
+  ): Promise<{ token: string; employee: Employee } | null> {
     const employee = await this.employeeRepo.findEmployeeByEmail(email);
     if (!employee) {
       throw new BadRequestException('Invalid email or password');
@@ -63,7 +68,11 @@ export class EmployeeService {
       throw new BadRequestException('Invalid email or password');
     }
 
-    return employee;
+    const token = jwt.sign({ sub: employee._id }, process.env.JWT_SECRET, {
+      expiresIn: '1d',
+    });
+
+    return { token, employee };
   }
 
   private async comparePassword(
