@@ -7,6 +7,7 @@ export class EmployeeMap {
       firstName: employee.firstName,
       lastName: employee.lastName,
       email: employee.email,
+      password: employee.password,
       address: employee.address,
       phoneNumber: employee.phoneNumber,
       role: employee.role,

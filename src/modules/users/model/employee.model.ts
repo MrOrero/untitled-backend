@@ -4,6 +4,7 @@ export interface Employee {
   firstName: string;
   lastName: string;
   email: string;
+  password: string;
   address: string;
   phoneNumber: string;
   role: string;
@@ -22,6 +23,10 @@ class EmployeeModel {
         required: true,
       },
       email: {
+        type: String,
+        required: true,
+      },
+      password: {
         type: String,
         required: true,
       },

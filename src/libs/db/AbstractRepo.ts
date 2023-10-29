@@ -1,4 +1,6 @@
-import mongoose, { Model, Document } from "mongoose";
+import { Model } from 'mongoose';
+import { Company } from 'src/modules/users/model/company.model';
+import { Employee } from 'src/modules/users/model/employee.model';
 
 export abstract class AbstractRepo<T> {
   constructor(private readonly model: Model<T>) {}
@@ -16,6 +18,20 @@ export abstract class AbstractRepo<T> {
 
   async findOne(where: Record<string, any>) {
     const entity = await this.model.findOne(where).exec();
+    return entity;
+  }
+  async findCompanyByEmail(email: string): Promise<Company | null> {
+    const company = await this.model.findOne({ email }).exec();
+    return company as unknown as Company | null;
+  }
+
+  async findEmployeeByEmail(email: string): Promise<Employee | null> {
+    const employee = await this.model.findOne({ email }).exec();
+    return employee as unknown as Employee | null;
+  }
+
+  async findById(id: string) {
+    const entity = await this.model.findById(id).exec();
     return entity;
   }
 
@@ -37,14 +53,19 @@ export abstract class AbstractRepo<T> {
     pageSize = 10,
     currentPage = 1,
     where: Record<string, any> = {},
-    relation?: any
+    relation?: any,
   ): Promise<{
     data: T[];
     pagination: PaginatedData;
   }> {
     const offset = (currentPage - 1) * pageSize;
     const [data, total] = await Promise.all([
-      this.model.find(where).limit(pageSize).skip(offset).populate(relation).exec(),
+      this.model
+        .find(where)
+        .limit(pageSize)
+        .skip(offset)
+        .populate(relation)
+        .exec(),
       this.model.countDocuments(where),
     ]);
     return {
@@ -57,10 +78,7 @@ export abstract class AbstractRepo<T> {
     };
   }
 
-  async find(
-    where: Record<string, any>,
-    order: Record<string, any> = {},
-  ) {
+  async find(where: Record<string, any>, order: Record<string, any> = {}) {
     return this.model.find(where).sort(order).exec();
   }
 

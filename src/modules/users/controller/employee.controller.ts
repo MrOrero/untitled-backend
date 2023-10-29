@@ -6,19 +6,22 @@ import {
   Param,
   Body,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { EmployeeService } from '../services/employee.service';
+import { LocalAuthGuard } from '../../auth/guards/local-auth.guard';
 
 @Controller('employees')
 export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) {}
 
-  @Post()
-  async createEmployee(@Body() employeeData: any) {
+  @Post('register')
+  async register(@Body() employeeData: any) {
     const {
       firstName,
       lastName,
       email,
+      password,
       address,
       phoneNumber,
       role,
@@ -26,10 +29,11 @@ export class EmployeeController {
     } = employeeData;
 
     try {
-      const createdEmployee = await this.employeeService.createEmployee(
+      const createdEmployee = await this.employeeService.register(
         firstName,
         lastName,
         email,
+        password,
         address,
         phoneNumber,
         role,
@@ -41,10 +45,34 @@ export class EmployeeController {
     }
   }
 
+  @UseGuards(LocalAuthGuard)
+  @Post('login')
+  async login(@Body() loginData: any) {
+    const { email, password } = loginData;
+
+    try {
+      const employee = await this.employeeService.login(email, password);
+      return employee;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
   @Get()
   async getAllEmployees() {
     const employees = await this.employeeService.getAllEmployees();
     return employees;
+  }
+
+  @Get(':id')
+  async getEmployeeById(@Param('id') employeeId: string) {
+    const employee = await this.employeeService.getEmployeeById(employeeId);
+
+    if (!employee) {
+      throw new BadRequestException(`Employee with ID ${employeeId} not found`);
+    }
+
+    return employee;
   }
 
   @Put(':id')

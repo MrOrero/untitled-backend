@@ -3,26 +3,35 @@ import { Employee } from '../model/employee.model';
 import { EmployeeRepo } from '../repository/employee.repository';
 import { EmployeeDomain } from '../domain/employee';
 import { EmployeeMap } from '../mappers/employeeMap';
-
+import * as bcrypt from 'bcrypt';
 @Injectable()
 export class EmployeeService {
   constructor(
     @Inject('EmployeeRepo') private readonly employeeRepo: EmployeeRepo,
   ) {}
 
-  async createEmployee(
+  async register(
     firstName: string,
     lastName: string,
     email: string,
+    password: string,
     address: string,
     phoneNumber: string,
     role: string,
     department: string,
   ) {
+    const emailExists = await this.employeeRepo.exists({ email });
+    if (emailExists) {
+      throw new BadRequestException('Email already exists');
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const newEmployeeorError = EmployeeDomain.create({
       firstName,
       lastName,
       email,
+      password: hashedPassword,
       address,
       phoneNumber,
       role,
@@ -40,10 +49,43 @@ export class EmployeeService {
     return this.employeeRepo.save(data);
   }
 
+  async login(email: string, password: string): Promise<Employee | null> {
+    const employee = await this.employeeRepo.findEmployeeByEmail(email);
+    if (!employee) {
+      throw new BadRequestException('Invalid email or password');
+    }
+
+    const passwordMatch = await this.comparePassword(
+      password,
+      employee.password,
+    );
+    if (!passwordMatch) {
+      throw new BadRequestException('Invalid email or password');
+    }
+
+    return employee;
+  }
+
+  private async comparePassword(
+    enteredPassword: string,
+    actualPassword: string,
+  ): Promise<boolean> {
+    return bcrypt.compare(enteredPassword, actualPassword);
+  }
+
   async getAllEmployees(): Promise<any> {
     const employees = await this.employeeRepo.findPaginated();
-    console.log(employees);
     return employees;
+  }
+
+  async getEmployeeById(employeeId: string): Promise<Employee | null> {
+    const employee = await this.employeeRepo.findById(employeeId);
+    return employee;
+  }
+
+  async findByEmail(email: string): Promise<Employee | null> {
+    const employee = await this.employeeRepo.findEmployeeByEmail(email);
+    return employee;
   }
 
   async updateEmployee(
@@ -57,7 +99,7 @@ export class EmployeeService {
     department: string,
   ): Promise<Employee | null> {
     const updatedEmployee = await this.employeeRepo.findOneAndUpdate(
-      { id }, // Assuming you have an id field
+      { id },
       { firstName, lastName, email, address, phoneNumber, role, department },
     );
     return updatedEmployee;

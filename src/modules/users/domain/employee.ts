@@ -7,6 +7,7 @@ export interface EmployeeProps {
   firstName: string;
   lastName: string;
   email: string;
+  password: string;
   address: string;
   phoneNumber: string;
   role: string;
@@ -25,6 +26,10 @@ export class EmployeeValidation {
   @IsString()
   @IsNotEmpty()
   email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  password: string;
 
   @IsString()
   @IsNotEmpty()
@@ -62,6 +67,10 @@ export class EmployeeDomain extends BaseAggregateRoot<EmployeeProps> {
 
   get email(): string {
     return this.props.email;
+  }
+
+  get password(): string {
+    return this.props.password;
   }
 
   get address(): string {
