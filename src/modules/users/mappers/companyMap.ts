@@ -4,7 +4,6 @@ import { Company } from '../model/company.model';
 export class CompanyMap {
   public static toPersistence(company: CompanyDomain): Company {
     return {
-      _id: company.id,
       name: company.name,
       address: company.address,
       industry: company.industry,

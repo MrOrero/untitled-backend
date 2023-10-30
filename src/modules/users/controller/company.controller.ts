@@ -10,7 +10,8 @@ import {
 } from '@nestjs/common';
 import { UseGuards } from '@nestjs/common';
 import { CompanyService } from '../services/company.service';
-import { LocalAuthGuard } from '../../auth/guards/local-auth.guard';
+// import { LocalAuthGuard } from '../../auth/guards/local-auth.guard';
+import { AuthMiddleware } from '../middleware/auth.middleware';
 
 @Controller('companies')
 export class CompanyController {
@@ -50,13 +51,14 @@ export class CompanyController {
     }
   }
 
-  @Get()
+  @UseGuards(AuthMiddleware)
+  @Get('all')
   async getAllCompanies() {
     const companies = await this.companyService.getAllCompanies();
     return companies;
   }
 
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(AuthMiddleware)
   @Get(':id')
   async getCompanyById(@Param('id') companyId: string) {
     const company = await this.companyService.getCompanyById(companyId);
@@ -68,6 +70,7 @@ export class CompanyController {
     return company;
   }
 
+  @UseGuards(AuthMiddleware)
   @Put(':id')
   async updateCompany(
     @Param('id') companyId: string,

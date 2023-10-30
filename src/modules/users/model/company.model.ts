@@ -1,7 +1,6 @@
 import { Schema, model } from 'mongoose';
 
 export interface Company {
-  _id?: string;
   name: string;
   address: string;
   industry: string;

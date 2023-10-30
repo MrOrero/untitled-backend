@@ -5,6 +5,7 @@ import { CompanyDomain } from '../domain/company';
 import { CompanyMap } from '../mappers/companyMap';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
+import { ObjectId } from 'mongodb';
 //import { createToken } from 'src/libs/utils/createToken';
 
 @Injectable()
@@ -21,6 +22,7 @@ export class CompanyService {
    * @param email - The company's email address.
    * @param taxId - The company's tax ID.
    * @param password - The company's password.
+   * @param type - The company's type.
    * @returns {Promise<Company>} - The registered company.
    * @throws BadRequestException if email already exists or validation fails.
    */
@@ -89,9 +91,13 @@ export class CompanyService {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const token = jwt.sign({ sub: company._id }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
-    });
+    const token = jwt.sign(
+      { sub: new ObjectId().toHexString(), type: 'COMPANY' },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '1h',
+      },
+    );
 
     return { token, company };
   }

@@ -5,6 +5,7 @@ import { EmployeeDomain } from '../domain/employee';
 import { EmployeeMap } from '../mappers/employeeMap';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
+import { ObjectId } from 'mongodb';
 //import { createToken } from 'src/libs/utils/createToken';
 @Injectable()
 export class EmployeeService {
@@ -68,9 +69,13 @@ export class EmployeeService {
       throw new BadRequestException('Invalid email or password');
     }
 
-    const token = jwt.sign({ sub: employee._id }, process.env.JWT_SECRET, {
-      expiresIn: '1d',
-    });
+    const token = jwt.sign(
+      { sub: new ObjectId().toHexString() },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '1h',
+      },
+    );
 
     return { token, employee };
   }

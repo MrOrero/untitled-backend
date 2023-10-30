@@ -11,11 +11,14 @@ import {
 } from '@nestjs/common';
 import { EmployeeService } from '../services/employee.service';
 import { LocalAuthGuard } from '../../auth/guards/local-auth.guard';
+//import { AuthMiddleware } from '../middleware/auth.middleware';
+import { CompanyAuthMiddleware } from '../middleware/company-auth.middleware';
 
 @Controller('employees')
 export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) {}
 
+  @UseGuards(CompanyAuthMiddleware)
   @Post('register')
   async register(@Body() employeeData: any) {
     const {
