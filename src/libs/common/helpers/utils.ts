@@ -73,6 +73,14 @@ export const validateFile = (fileValidationProps: FileValidationProps) => {
   }
 };
 
+export const giveCurrentDateTime = () => {
+  const today = new Date();
+  const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+  const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  const dateTime = date + ' ' + time;
+  return dateTime;
+}
+
 // export const convertFileToBufferFromUrl = async (fileUrl: string): Promise<Buffer> => {
 //   const response = await axios.get(fileUrl, { responseType: "arraybuffer" });
 //   return Buffer.from(response.data, "binary");
