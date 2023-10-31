@@ -4,6 +4,7 @@ import { Employee } from '../model/employee.model';
 export class EmployeeMap {
   public static toPersistence(employee: EmployeeDomain): Employee {
     return {
+      company: employee.company,
       firstName: employee.firstName,
       lastName: employee.lastName,
       email: employee.email,

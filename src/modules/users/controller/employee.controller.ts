@@ -19,9 +19,10 @@ export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) {}
 
   @UseGuards(CompanyAuthMiddleware)
-  @Post('register')
+  @Post('create')
   async register(@Body() employeeData: any) {
     const {
+      company,
       firstName,
       lastName,
       email,
@@ -34,6 +35,7 @@ export class EmployeeController {
 
     try {
       const createdEmployee = await this.employeeService.register(
+        company,
         firstName,
         lastName,
         email,
@@ -62,7 +64,7 @@ export class EmployeeController {
     }
   }
 
-  @Get()
+  @Get('all')
   async getAllEmployees() {
     const employees = await this.employeeService.getAllEmployees();
     return employees;

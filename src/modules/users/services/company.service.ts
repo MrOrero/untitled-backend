@@ -150,7 +150,7 @@ export class CompanyService {
 
   // Function to find company by email
   async findByEmail(email: string): Promise<Company | null> {
-    const company = await this.companyRepo.findCompanyByEmail(email);
+    const company = await this.companyRepo.findOne({ email });
     return company;
   }
 

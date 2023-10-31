@@ -14,6 +14,7 @@ export class EmployeeService {
   ) {}
 
   async register(
+    company: string,
     firstName: string,
     lastName: string,
     email: string,
@@ -31,6 +32,7 @@ export class EmployeeService {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newEmployeeorError = EmployeeDomain.create({
+      company,
       firstName,
       lastName,
       email,
@@ -56,7 +58,7 @@ export class EmployeeService {
     email: string,
     password: string,
   ): Promise<{ token: string; employee: Employee } | null> {
-    const employee = await this.employeeRepo.findEmployeeByEmail(email);
+    const employee = await this.employeeRepo.findOne({ email });
     if (!employee) {
       throw new BadRequestException('Invalid email or password');
     }
@@ -98,7 +100,7 @@ export class EmployeeService {
   }
 
   async findByEmail(email: string): Promise<Employee | null> {
-    const employee = await this.employeeRepo.findEmployeeByEmail(email);
+    const employee = await this.employeeRepo.findOne({ email });
     return employee;
   }
 

@@ -1,6 +1,7 @@
 import { Schema, model } from 'mongoose';
 
 export interface Employee {
+  company: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -14,6 +15,11 @@ export interface Employee {
 class EmployeeModel {
   private static schema: Schema = new Schema(
     {
+      company: {
+        type: Schema.Types.ObjectId,
+        ref: 'Company',
+        required: true,
+      },
       firstName: {
         type: String,
         required: true,

@@ -2,7 +2,7 @@ import {
   Controller,
   Post,
   Get,
-  Put,
+  // Put,
   Param,
   Body,
   BadRequestException,
@@ -70,28 +70,28 @@ export class CompanyController {
     return company;
   }
 
-  @UseGuards(AuthMiddleware)
-  @Put(':id')
-  async updateCompany(
-    @Param('id') companyId: string,
-    @Body() companyData: any,
-  ) {
-    const { name, address, industry, email, taxId, password } = companyData;
+  // @UseGuards(AuthMiddleware)
+  // @Put(':id')
+  // async updateCompany(
+  //   @Param('id') companyId: string,
+  //   @Body() companyData: any,
+  // ) {
+  //   const { name, address, industry, email, taxId, password } = companyData;
 
-    const updatedCompany = await this.companyService.updateCompany(
-      companyId,
-      name,
-      address,
-      industry,
-      email,
-      taxId,
-      password,
-    );
+  //   const updatedCompany = await this.companyService.updateCompany(
+  //     companyId,
+  //     name,
+  //     address,
+  //     industry,
+  //     email,
+  //     taxId,
+  //     password,
+  //   );
 
-    if (!updatedCompany) {
-      throw new BadRequestException(`Company with ID ${companyId} not found`);
-    }
+  //   if (!updatedCompany) {
+  //     throw new BadRequestException(`Company with ID ${companyId} not found`);
+  //   }
 
-    return updatedCompany;
-  }
+  //   return updatedCompany;
+  // }
 }
