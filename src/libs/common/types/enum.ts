@@ -1,9 +1,12 @@
 export enum StepTypes {
-    Upload = "Upload",
-    Sign = "Sign",
+    Upload = "UploadDocument",
+    CheckList = "CheckList"
 }
 
 export enum InjectionTokens {
     OnboardingStepsRepo = "OnboardingStepsRepo",
     OnboardingWorkflowRepo = "OnboardingWorkflowRepo",
+    UploadDocumentRepo = "UploadDocumentRepo",
+    SignDocumentRepo = "SignDocumentRepo",
+    CheckListRepo = "CheckListRepo"
 }

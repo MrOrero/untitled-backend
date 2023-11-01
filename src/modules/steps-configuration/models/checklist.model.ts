@@ -1,18 +1,19 @@
 import { Schema, Types, model } from 'mongoose';
 
-export interface DocumentInfo {
-    name: string;
-    url: string;
+export interface Item {
+    label: string;
+    completed: boolean;
 }
 
-export interface UploadDocument {
-    _id? : Types.ObjectId;
+export interface CheckList {
+    _id?: Types.ObjectId;
     title: string;
     overview: string;
-    documents: DocumentInfo[];
+    items: Item[];
+    approved?: boolean;
 }
 
-class UploadDocumentModel {
+class CheckListModel {
     private static schema: Schema = new Schema(
         {
             title: {
@@ -23,25 +24,29 @@ class UploadDocumentModel {
                 type: String,
                 required: true,
             },
-            documents: [
+            items: [
                 {
-                    name: {
+                    label: {
                         type: String,
                         required: true,
                     },
-                    url: {
-                        type: String,
-                        default: '',
+                    completed: {
+                        type: Boolean,
+                        default: false,
                     }
                 }
-            ]
+            ],
+            approved: {
+                type: Boolean,
+                default: false,
+            }
         },
         { timestamps: true },
     );
 
     static getModel() {
-        return model<UploadDocument>('UploadDocument', this.schema);
+        return model<CheckList>('CheckList', this.schema);
     }
 }
 
-export default UploadDocumentModel;
+export default CheckListModel;
