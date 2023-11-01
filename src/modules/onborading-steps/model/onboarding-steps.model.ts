@@ -10,7 +10,7 @@ class OnboardingStepModel {
         {
             type: {
                 type: String,
-                enum: ['Upload', 'sign'], 
+                enum: ['UploadDocument', 'SignDocument', 'CheckList'], 
                 required: true,
             },
             data: {

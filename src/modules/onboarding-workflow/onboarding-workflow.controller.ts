@@ -7,6 +7,7 @@ import {
   } from "@nestjs/common";
 import { AddWorkFlowDto } from "./dtos/AddWorkFlowDto";
 import { OnboardingWorkflowService } from "./services/onboarding-workflow.service";
+import { AddStepWorkFlowDto } from "./dtos/AddStepToWorkFlowDto";
   
   @Controller("onboarding-workflow")
   export class OnboardingWorkflowController {
@@ -27,8 +28,8 @@ import { OnboardingWorkflowService } from "./services/onboarding-workflow.servic
     }
 
     @Post("/add-step/:workflowId")
-    async addStepToWorkflow(@Body() dto: any, @Param('workflowId') workflowId: string) {
-      const res = await this.onboardingWorkflowService.addStepToWorkflow(workflowId, dto.stepId);
+    async addStepToWorkflow(@Body() dto: AddStepWorkFlowDto, @Param('workflowId') workflowId: string) {
+      const res = await this.onboardingWorkflowService.addStepToWorkflow(workflowId, dto);
       return res;
     }
 

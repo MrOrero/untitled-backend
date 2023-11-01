@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Schema, Types, model } from 'mongoose';
 
 export interface DocumentInfo {
     name: string;
@@ -6,10 +6,11 @@ export interface DocumentInfo {
 }
 
 export interface SignDocument {
+    _id?: Types.ObjectId;
     title: string;
     overview: string;
     documents: DocumentInfo[];
-    signedDocuments: DocumentInfo[];
+    signedDocuments?: DocumentInfo[];
 }
 
 class SignDocumentModel {

@@ -5,6 +5,7 @@ import { OnboardingWorkflowDomain } from '../domain/onboarding-workflow';
 import { OnboardingWorkflowMap } from '../mappers/OnboardingWorkflowMap';
 import { AddWorkFlowDto } from '../dtos/AddWorkFlowDto';
 import { InjectionTokens } from 'src/libs/common/types/enum';
+import { AddStepWorkFlowDto } from '../dtos/AddStepToWorkFlowDto';
 
 @Injectable()
 export class OnboardingWorkflowService {
@@ -51,10 +52,13 @@ export class OnboardingWorkflowService {
     }
   }
 
-  async addStepToWorkflow(workflowId: string, stepId: string) {
-    console.log(workflowId, stepId);
+  async addStepToWorkflow(workflowId: string, dto: AddStepWorkFlowDto) {
     try {
-      return this.onboardingWorkflowRepo.addStepToWorkflow(workflowId, stepId);
+      const order = await this.onboardingWorkflowRepo.findOne({ _id: workflowId, 'steps.order': dto.order });
+      if(order) {
+        throw new BadRequestException('Order already exists, change order');
+      }
+      return this.onboardingWorkflowRepo.addStepToWorkflow(workflowId, dto);
     } catch (error) {
       console.log(error);
     }
