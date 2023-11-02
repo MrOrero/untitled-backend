@@ -4,10 +4,8 @@ import { EmployeeRepo } from '../repository/employee.repository';
 import { EmployeeDomain } from '../domain/employee';
 import { EmployeeMap } from '../mappers/employeeMap';
 import * as bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken';
-import { ObjectId } from 'mongodb';
+import { createToken } from 'src/libs/utils/createToken';
 import { UpdateEmployeeDto } from '../dto/UpdateEmployeeDto';
-//import { createToken } from 'src/libs/utils/createToken';
 @Injectable()
 export class EmployeeService {
   constructor(
@@ -72,13 +70,7 @@ export class EmployeeService {
       throw new BadRequestException('Invalid email or password');
     }
 
-    const token = jwt.sign(
-      { sub: new ObjectId().toHexString() },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: '1h',
-      },
-    );
+    const token = createToken(employee.id);
 
     return { token, employee };
   }
