@@ -117,7 +117,6 @@ export class EmployeeService {
    * @returns {Promise<any>} - An array of employees.
    */
   async getEmployeesByCompany(companyId: string) {
-    console.log('companyId', companyId);
     const employees = await this.employeeRepo.findByCompany(companyId);
     return employees;
   }
