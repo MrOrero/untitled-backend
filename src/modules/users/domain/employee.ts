@@ -4,7 +4,7 @@ import { Guard } from 'src/libs/domain/logic/Guard';
 import { Result } from 'src/libs/domain/logic/Result';
 
 export interface EmployeeProps {
-  company: string;
+  companyId: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -18,7 +18,7 @@ export interface EmployeeProps {
 export class EmployeeValidation {
   @IsString()
   @IsNotEmpty()
-  company: string;
+  companyId: string;
 
   @IsString()
   @IsNotEmpty()
@@ -62,8 +62,8 @@ export class EmployeeDomain extends BaseAggregateRoot<EmployeeProps> {
     return this._id.toString();
   }
 
-  get company(): string {
-    return this.props.company;
+  get companyId(): string {
+    return this.props.companyId;
   }
 
   get firstName(): string {

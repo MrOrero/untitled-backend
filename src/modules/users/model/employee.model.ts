@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 
 export interface Employee {
-  company: string;
+  companyId: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -16,7 +16,7 @@ export interface Employee {
 class EmployeeModel {
   private static schema: Schema = new Schema(
     {
-      company: {
+      companyId: {
         type: Schema.Types.ObjectId,
         ref: 'Company',
         required: true,

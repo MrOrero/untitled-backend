@@ -5,4 +5,9 @@ export class EmployeeRepo extends AbstractRepo<Employee> {
   constructor() {
     super(EmployeeModel.getModel());
   }
+  async findByCompany(companyId: string): Promise<Employee[]> {
+    console.log('companyId', companyId);
+    const employees = EmployeeModel.getModel().find({ companyId }).exec();
+    return employees;
+  }
 }

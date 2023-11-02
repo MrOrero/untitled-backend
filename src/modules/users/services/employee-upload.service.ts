@@ -27,7 +27,7 @@ export class EmployeeUploadService {
         .on('end', async () => {
           // Process the validated data and save to the database
           for (const employeeData of employees) {
-            await this.employeeService.register(
+            await this.employeeService.create(
               employeeData.companyID,
               employeeData.firstName,
               employeeData.lastName,

@@ -1,45 +1,32 @@
 import {
   Injectable,
-  CanActivate,
-  ExecutionContext,
+  NestMiddleware,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Request } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()
-export class CompanyAuthMiddleware implements CanActivate {
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<Request>();
-    const authorizationHeader = request.headers['authorization'];
+export class CompanyAuthMiddleware implements NestMiddleware {
+  use(req: Request, res: Response, next: NextFunction) {
+    const token = req.header('Authorization');
 
-    if (!authorizationHeader) {
-      throw new UnauthorizedException('Unauthorized');
-    }
-
-    const [tokenType, token] = authorizationHeader.split(' ');
-
-    if (tokenType !== 'Bearer' || !token) {
-      throw new UnauthorizedException('Unauthorized');
+    if (!token) {
+      throw new UnauthorizedException('No token provided');
     }
 
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
-        type: string;
-      };
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      if (typeof decoded === 'string') {
-        throw new UnauthorizedException('Unauthorized');
-      }
-
-      if (decoded.type === 'COMPANY') {
-        (request as any).user = decoded;
-        return true;
+      if (decoded && decoded['company']) {
+        // Extract companyId from the token and set it in the request object
+        req['companyID'] = decoded['company'];
+        next();
+      } else {
+        throw new UnauthorizedException('Not a company');
       }
     } catch (error) {
-      throw new UnauthorizedException('You are not authorized');
+      throw new UnauthorizedException('Invalid token');
     }
-
-    throw new UnauthorizedException('Unauthorized');
   }
 }
