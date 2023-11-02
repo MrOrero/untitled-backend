@@ -10,7 +10,7 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { EmployeeService } from '../services/employee.service';
-import { LocalAuthGuard } from '../../auth/guards/local-auth.guard';
+//import { LocalAuthGuard } from '../../auth/guards/local-auth.guard';
 //import { AuthMiddleware } from '../middleware/auth.middleware';
 import { CompanyAuthMiddleware } from '../middleware/company-auth.middleware';
 
@@ -64,13 +64,14 @@ export class EmployeeController {
     }
   }
 
+  @UseGuards(CompanyAuthMiddleware)
   @Get('all')
   async getAllEmployees() {
     const employees = await this.employeeService.getAllEmployees();
     return employees;
   }
 
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(CompanyAuthMiddleware)
   @Get(':id')
   async getEmployeeById(@Param('id') employeeId: string) {
     const employee = await this.employeeService.getEmployeeById(employeeId);
@@ -82,6 +83,7 @@ export class EmployeeController {
     return employee;
   }
 
+  @UseGuards(CompanyAuthMiddleware)
   @Put(':id')
   async updateEmployee(
     @Param('id') employeeId: string,

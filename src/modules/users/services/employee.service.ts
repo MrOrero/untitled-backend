@@ -13,6 +13,20 @@ export class EmployeeService {
     @Inject('EmployeeRepo') private readonly employeeRepo: EmployeeRepo,
   ) {}
 
+  /**
+   * Register a new employee.
+   * @param company - The employee's company.
+   * @param firstName - The employee's first name.
+   * @param lastName - The employee's last name.
+   * @param email - The employee's email address.
+   * @param password - The employee's password.
+   * @param address - The employee's address.
+   * @param phoneNumber - The employee's phone number.
+   * @param role - The employee's role.
+   * @param department - The employee's department.
+   * @returns {Promise<Employee>} - The registered employee.
+   * @throws BadRequestException if email already exists or validation fails.
+   * */
   async register(
     company: string,
     firstName: string,
@@ -24,11 +38,13 @@ export class EmployeeService {
     role: string,
     department: string,
   ) {
+    // Check if email already exists
     const emailExists = await this.employeeRepo.exists({ email });
     if (emailExists) {
       throw new BadRequestException('Email already exists');
     }
 
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newEmployeeorError = EmployeeDomain.create({
@@ -54,6 +70,13 @@ export class EmployeeService {
     return this.employeeRepo.save(data);
   }
 
+  /**
+   * Login an employee.
+   * @param email - The employee's email address.
+   * @param password - The employee's password.
+   * @returns {Promise<{ token: string; employee: Employee } | null>} - An object containing a token and the employee, or null if login fails.
+   * @throws BadRequestException if login credentials are invalid.
+   * */
   async login(
     email: string,
     password: string,
@@ -82,26 +105,24 @@ export class EmployeeService {
     return { token, employee };
   }
 
-  private async comparePassword(
-    enteredPassword: string,
-    actualPassword: string,
-  ): Promise<boolean> {
-    return bcrypt.compare(enteredPassword, actualPassword);
-  }
-
   async getAllEmployees(): Promise<any> {
     const employees = await this.employeeRepo.findPaginated();
     return employees;
   }
-
+  /**
+   * Get an employee by ID.
+   * @param employeeId - The employee's ID.
+   * @returns {Promise<Employee | null>} - The employee, or null if not found.
+   * */
   async getEmployeeById(employeeId: string): Promise<Employee | null> {
     const employee = await this.employeeRepo.findById(employeeId);
     return employee;
   }
 
-  async findByEmail(email: string): Promise<Employee | null> {
-    const employee = await this.employeeRepo.findOne({ email });
-    return employee;
+  async getEmployeesByCompany(company: string): Promise<any> {
+    const employees = await this.employeeRepo.find({ company: company });
+    console.log(company);
+    return employees;
   }
 
   async updateEmployee(
@@ -124,5 +145,19 @@ export class EmployeeService {
   async deleteEmployee(id: string): Promise<{ success: boolean }> {
     const deleteResult = await this.employeeRepo.findOneAndDelete({ id });
     return { success: deleteResult.status };
+  }
+
+  // Function to find employee by email
+  async findByEmail(email: string): Promise<Employee | null> {
+    const employee = await this.employeeRepo.findOne({ email });
+    return employee;
+  }
+
+  // Function to compare password
+  private async comparePassword(
+    enteredPassword: string,
+    actualPassword: string,
+  ): Promise<boolean> {
+    return bcrypt.compare(enteredPassword, actualPassword);
   }
 }
