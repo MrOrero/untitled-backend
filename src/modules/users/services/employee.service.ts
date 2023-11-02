@@ -6,6 +6,7 @@ import { EmployeeMap } from '../mappers/employeeMap';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
+import { UpdateEmployeeDto } from '../dto/UpdateEmployeeDto';
 //import { createToken } from 'src/libs/utils/createToken';
 @Injectable()
 export class EmployeeService {
@@ -106,17 +107,11 @@ export class EmployeeService {
 
   async updateEmployee(
     id: string,
-    firstName: string,
-    lastName: string,
-    email: string,
-    address: string,
-    phoneNumber: string,
-    role: string,
-    department: string,
+    dto: UpdateEmployeeDto,
   ): Promise<Employee | null> {
     const updatedEmployee = await this.employeeRepo.findOneAndUpdate(
-      { id },
-      { firstName, lastName, email, address, phoneNumber, role, department },
+      { _id: id }, 
+      dto,
     );
     return updatedEmployee;
   }

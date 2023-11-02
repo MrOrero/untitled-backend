@@ -6,9 +6,13 @@ import { OnboardingWorkflowMap } from '../mappers/OnboardingWorkflowMap';
 import { AddWorkFlowDto } from '../dtos/AddWorkFlowDto';
 import { InjectionTokens } from 'src/libs/common/types/enum';
 import { AddStepWorkFlowDto } from '../dtos/AddStepToWorkFlowDto';
+import { EmployeeService } from 'src/modules/users/services/employee.service';
 
 @Injectable()
 export class OnboardingWorkflowService {
+
+  @Inject()
+  private readonly employeeService: EmployeeService;
   
   constructor(@Inject(InjectionTokens.OnboardingWorkflowRepo)private readonly onboardingWorkflowRepo: OnboardingWorkflowRepo) {}
 
@@ -39,18 +43,28 @@ export class OnboardingWorkflowService {
 
   async getAllWorkflows(): Promise<any> {
     try {
-      const workflows = await this.onboardingWorkflowRepo.findPaginated(10, 1 , {}, {
-        path: 'steps.step',
-        populate: {
-          path: 'data',
-        } 
-      });
+      const workflows = await this.onboardingWorkflowRepo.findPaginated(10, 1 , {});
       return workflows;
       
     } catch (error) {
       console.log(error);
     }
   }
+
+  async getWorkflowById(id: string): Promise<any> {
+    try {
+      const workflow = await this.onboardingWorkflowRepo.findById(id, {
+        path: 'steps.step',
+        populate: {
+          path: 'data',
+        } 
+      });
+      return workflow;
+      
+    } catch (error) {
+      console.log(error);
+    }
+  }  
 
   async addStepToWorkflow(workflowId: string, dto: AddStepWorkFlowDto) {
     try {
@@ -59,6 +73,14 @@ export class OnboardingWorkflowService {
         throw new BadRequestException('Order already exists, change order');
       }
       return this.onboardingWorkflowRepo.addStepToWorkflow(workflowId, dto);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async assignWorkflowToEmployee(workflowId: string, employeeId: string) {
+    try {
+      return this.employeeService.updateEmployee(employeeId, { assignedWorkflow: workflowId })
     } catch (error) {
       console.log(error);
     }

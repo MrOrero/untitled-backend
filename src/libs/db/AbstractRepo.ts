@@ -19,8 +19,8 @@ export abstract class AbstractRepo<T> {
     return entity;
   }
 
-  async findById(id: string) {
-    const entity = await this.model.findById(id).exec();
+  async findById(id: string, relation?: any) {
+    const entity = await this.model.findById(id).populate(relation).exec();
     return entity;
   }
 

@@ -10,6 +10,7 @@ export interface Employee {
   phoneNumber: string;
   role: string;
   department: string;
+  workflowId?: string;
 }
 
 class EmployeeModel {
@@ -51,6 +52,12 @@ class EmployeeModel {
       department: {
         type: String,
         required: true,
+      },
+      assignedWorkflow: {
+        type: Schema.Types.ObjectId,
+        ref: 'OnboardingWorkflow',
+        required: false,
+        default: null,
       },
     },
     { timestamps: true },
