@@ -4,9 +4,9 @@ import { CompanyRepo } from '../repository/company.repository';
 import { CompanyDomain } from '../domain/company';
 import { CompanyMap } from '../mappers/companyMap';
 import * as bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken';
-import { ObjectId } from 'mongodb';
-//import { createToken } from 'src/libs/utils/createToken';
+// import * as jwt from 'jsonwebtoken';
+// import { ObjectId } from 'mongodb';
+import { createToken } from 'src/libs/utils/createToken';
 
 @Injectable()
 export class CompanyService {
@@ -74,7 +74,7 @@ export class CompanyService {
     email: string,
     password: string,
   ): Promise<{ token: string; company: Company } | null> {
-    const company = await this.findByEmail(email);
+    const company = await this.companyRepo.findOne({ email });
 
     // Check if company exists
     if (!company) {
@@ -91,14 +91,7 @@ export class CompanyService {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const token = jwt.sign(
-      { sub: new ObjectId().toHexString(), type: 'COMPANY' },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: '1d',
-      },
-    );
-
+    const token = createToken({ companyId: company.id });
     return { token, company };
   }
 

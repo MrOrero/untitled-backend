@@ -83,7 +83,6 @@ export class EmployeeController {
     return employee;
   }
 
-  @UseGuards(CompanyAuthMiddleware)
   @Put(':id')
   async updateEmployee(
     @Param('id') employeeId: string,

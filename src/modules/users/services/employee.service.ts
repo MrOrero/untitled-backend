@@ -4,9 +4,9 @@ import { EmployeeRepo } from '../repository/employee.repository';
 import { EmployeeDomain } from '../domain/employee';
 import { EmployeeMap } from '../mappers/employeeMap';
 import * as bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken';
-import { ObjectId } from 'mongodb';
-//import { createToken } from 'src/libs/utils/createToken';
+// import * as jwt from 'jsonwebtoken';
+// import { ObjectId } from 'mongodb';
+import { createToken } from 'src/libs/utils/createToken';
 @Injectable()
 export class EmployeeService {
   constructor(
@@ -94,14 +94,7 @@ export class EmployeeService {
       throw new BadRequestException('Invalid email or password');
     }
 
-    const token = jwt.sign(
-      { sub: new ObjectId().toHexString() },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: '1h',
-      },
-    );
-
+    const token = createToken(employee.id);
     return { token, employee };
   }
 
@@ -119,9 +112,9 @@ export class EmployeeService {
     return employee;
   }
 
-  async getEmployeesByCompany(company: string): Promise<any> {
-    const employees = await this.employeeRepo.find({ company: company });
-    console.log(company);
+  async getEmployeesByCompany(companyID: string): Promise<Employee[] | null> {
+    console.log(companyID);
+    const employees = await this.employeeRepo.find({ companyID });
     return employees;
   }
 
