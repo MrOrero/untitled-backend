@@ -2,7 +2,9 @@ import {
     Body,
     Controller,
     Get,
+    Param,
     Post,
+    Put,
     UploadedFiles,
     UseInterceptors,
   } from "@nestjs/common";
@@ -20,6 +22,12 @@ import { CreateSignDocumentStepDto } from "./dtos/CreateSignedDocumentStepDto";
     @Post("/")
     async createStep(@Body() dto: CreateStepDto) {
       const res = await this.onboardingStepService.createStep(dto);
+      return res;
+    }
+
+    @Put("/:id")
+    async updateStep(@Body() dto: CreateStepDto, @Param('id') id: string) {
+      const res = await this.onboardingStepService.updateStep(id, dto);
       return res;
     }
 
