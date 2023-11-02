@@ -50,6 +50,26 @@ export class OnboardingStepsService {
 
   }
 
+  async updateStep(id: string, dto: CreateStepDto) {
+    try {
+      if(dto.type === 'UploadDocument'){
+        console.log(id);
+        const documentStep =  await this.onboardingStepsRepo.findById(id);
+        return this.uploadDocumentRepo.findOneAndUpdate({ _id: documentStep.data }, dto.data);
+      }
+
+      if(dto.type === 'CheckList'){
+        const documentStep =  await this.onboardingStepsRepo.findById(id);
+        return this.checkListRepo.findOneAndUpdate({ _id: documentStep.data }, dto.data); 
+      }
+
+      return
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async createSignDocumentStep(docs: Express.Multer.File[], dto: CreateSignDocumentStepDto) {
     try {
       const documentDetails =  await FirebaseStorage.uploadFiles(docs);

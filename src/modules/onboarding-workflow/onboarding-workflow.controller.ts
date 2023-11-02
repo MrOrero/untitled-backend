@@ -8,6 +8,7 @@ import {
 import { AddWorkFlowDto } from "./dtos/AddWorkFlowDto";
 import { OnboardingWorkflowService } from "./services/onboarding-workflow.service";
 import { AddStepWorkFlowDto } from "./dtos/AddStepToWorkFlowDto";
+import { AssignWorkflowToEmployeeDto } from "./dtos/AssignWorkflowToUser";
   
   @Controller("onboarding-workflow")
   export class OnboardingWorkflowController {
@@ -24,6 +25,18 @@ import { AddStepWorkFlowDto } from "./dtos/AddStepToWorkFlowDto";
     @Get("/")
     async getAllWorflows() {
       const res = await this.onboardingWorkflowService.getAllWorkflows();
+      return res;
+    }
+
+    @Get("/:id")
+    async getWorkflowById(@Param('id') id: string) {
+      const res = await this.onboardingWorkflowService.getWorkflowById(id);
+      return res;
+    }
+
+    @Post("assign")
+    async assignWorkflowToEmployee(@Body() dto: AssignWorkflowToEmployeeDto) {
+      const res = await this.onboardingWorkflowService.assignWorkflowToEmployee(dto.workflowId, dto.employeeId);
       return res;
     }
 

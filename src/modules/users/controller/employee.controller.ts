@@ -13,6 +13,7 @@ import { EmployeeService } from '../services/employee.service';
 //import { LocalAuthGuard } from '../../auth/guards/local-auth.guard';
 //import { AuthMiddleware } from '../middleware/auth.middleware';
 import { CompanyAuthMiddleware } from '../middleware/company-auth.middleware';
+import { UpdateEmployeeDto } from '../dto/UpdateEmployeeDto';
 
 @Controller('employees')
 export class EmployeeController {
@@ -86,27 +87,11 @@ export class EmployeeController {
   @Put(':id')
   async updateEmployee(
     @Param('id') employeeId: string,
-    @Body() employeeData: any,
+    @Body() employeeData: UpdateEmployeeDto,
   ) {
-    const {
-      firstName,
-      lastName,
-      email,
-      address,
-      phoneNumber,
-      role,
-      department,
-    } = employeeData;
-
     const updatedEmployee = await this.employeeService.updateEmployee(
       employeeId,
-      firstName,
-      lastName,
-      email,
-      address,
-      phoneNumber,
-      role,
-      department,
+      employeeData,
     );
 
     if (!updatedEmployee) {
