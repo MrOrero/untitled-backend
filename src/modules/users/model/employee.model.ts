@@ -47,9 +47,14 @@ class EmployeeModel {
       },
       role: {
         type: String,
+        enum: ['ADMIN', 'MEMBER'],
         required: true,
       },
       department: {
+        type: String,
+        required: true,
+      },
+      jobTitle: {
         type: String,
         required: true,
       },
