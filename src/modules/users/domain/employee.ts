@@ -13,6 +13,7 @@ export interface EmployeeProps {
   phoneNumber: string;
   role: string;
   department: string;
+  jobTitle: string;
 }
 
 export class EmployeeValidation {
@@ -51,6 +52,10 @@ export class EmployeeValidation {
   @IsString()
   @IsNotEmpty()
   department: string;
+
+  @IsString()
+  @IsNotEmpty()
+  jobTitle: string;
 }
 
 export class EmployeeDomain extends BaseAggregateRoot<EmployeeProps> {
@@ -96,6 +101,10 @@ export class EmployeeDomain extends BaseAggregateRoot<EmployeeProps> {
 
   get department(): string {
     return this.props.department;
+  }
+
+  get jobTitle(): string {
+    return this.props.jobTitle;
   }
 
   public static create(props: EmployeeProps): Result<EmployeeDomain> {

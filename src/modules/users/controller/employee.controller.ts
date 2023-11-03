@@ -18,7 +18,6 @@ import { UpdateEmployeeDto } from '../dto/UpdateEmployeeDto';
 export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) {}
 
-  @UseGuards(CompanyAuthMiddleware)
   @Post('create')
   async create(@Body() employeeData: any) {
     const {
@@ -31,6 +30,7 @@ export class EmployeeController {
       phoneNumber,
       role,
       department,
+      jobTitle,
     } = employeeData;
 
     try {
@@ -44,6 +44,7 @@ export class EmployeeController {
         phoneNumber,
         role,
         department,
+        jobTitle,
       );
       return createdEmployee;
     } catch (error) {

@@ -11,6 +11,7 @@ export interface Employee {
   role: string;
   department: string;
   workflowId?: string;
+  jobTitle: string;
 }
 
 class EmployeeModel {

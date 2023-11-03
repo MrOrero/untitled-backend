@@ -36,6 +36,7 @@ export class EmployeeService {
     phoneNumber: string,
     role: string,
     department: string,
+    jobTitle: string,
   ) {
     // Check if email already exists
     const emailExists = await this.employeeRepo.exists({ email });
@@ -56,6 +57,7 @@ export class EmployeeService {
       phoneNumber,
       role,
       department,
+      jobTitle,
     });
 
     if (newEmployeeorError.isFailure) {

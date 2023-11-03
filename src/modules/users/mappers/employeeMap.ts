@@ -13,6 +13,7 @@ export class EmployeeMap {
       phoneNumber: employee.phoneNumber,
       role: employee.role,
       department: employee.department,
+      jobTitle: employee.jobTitle,
     };
   }
 }

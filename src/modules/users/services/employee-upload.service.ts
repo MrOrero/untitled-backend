@@ -37,6 +37,7 @@ export class EmployeeUploadService {
               employeeData.phoneNumber,
               employeeData.role,
               employeeData.department,
+              employeeData.jobTitle,
             );
           }
         });
