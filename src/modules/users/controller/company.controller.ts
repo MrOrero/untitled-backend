@@ -2,7 +2,6 @@ import {
   Controller,
   Post,
   Get,
-  // Put,
   Param,
   Body,
   BadRequestException,
@@ -10,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { UseGuards } from '@nestjs/common';
 import { CompanyService } from '../services/company.service';
-// import { LocalAuthGuard } from '../../auth/guards/local-auth.guard';
 import { AuthMiddleware } from '../middleware/auth.middleware';
 
 @Controller('companies')
@@ -69,29 +67,4 @@ export class CompanyController {
 
     return company;
   }
-
-  // @UseGuards(AuthMiddleware)
-  // @Put(':id')
-  // async updateCompany(
-  //   @Param('id') companyId: string,
-  //   @Body() companyData: any,
-  // ) {
-  //   const { name, address, industry, email, taxId, password } = companyData;
-
-  //   const updatedCompany = await this.companyService.updateCompany(
-  //     companyId,
-  //     name,
-  //     address,
-  //     industry,
-  //     email,
-  //     taxId,
-  //     password,
-  //   );
-
-  //   if (!updatedCompany) {
-  //     throw new BadRequestException(`Company with ID ${companyId} not found`);
-  //   }
-
-  //   return updatedCompany;
-  // }
 }

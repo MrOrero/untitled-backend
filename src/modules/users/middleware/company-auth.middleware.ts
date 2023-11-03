@@ -37,7 +37,7 @@ export class CompanyAuthMiddleware implements CanActivate {
         return true;
       }
     } catch (error) {
-      throw new UnauthorizedException('Unauthorized');
+      throw new UnauthorizedException('You are not authorized');
     }
 
     throw new UnauthorizedException('Unauthorized');

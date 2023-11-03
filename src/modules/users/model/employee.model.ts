@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 
 export interface Employee {
-  company: string;
+  companyId: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -11,12 +11,13 @@ export interface Employee {
   role: string;
   department: string;
   workflowId?: string;
+  jobTitle: string;
 }
 
 class EmployeeModel {
   private static schema: Schema = new Schema(
     {
-      company: {
+      companyId: {
         type: Schema.Types.ObjectId,
         ref: 'Company',
         required: true,
@@ -47,9 +48,14 @@ class EmployeeModel {
       },
       role: {
         type: String,
+        enum: ['ADMIN', 'MEMBER'],
         required: true,
       },
       department: {
+        type: String,
+        required: true,
+      },
+      jobTitle: {
         type: String,
         required: true,
       },
