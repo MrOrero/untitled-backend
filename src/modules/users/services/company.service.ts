@@ -90,7 +90,7 @@ export class CompanyService {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const token = createToken(company.id);
+    const token = createToken(company.id, 'COMPANY');
     return { token, company };
   }
 

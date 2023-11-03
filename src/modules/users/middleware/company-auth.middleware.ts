@@ -26,20 +26,17 @@ export class CompanyAuthMiddleware implements CanActivate {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
         type: string;
+        id: string; // Add the ID field to the decoded token
       };
 
-      if (typeof decoded === 'string') {
-        throw new UnauthorizedException('Unauthorized');
-      }
-
       if (decoded.type === 'COMPANY') {
-        (request as any).user = decoded;
+        // Store the company ID from the token in the request object
+        (request as any).companyId = decoded.id;
+
         return true;
       }
     } catch (error) {
       throw new UnauthorizedException('You are not authorized');
     }
-
-    throw new UnauthorizedException('Unauthorized');
   }
 }

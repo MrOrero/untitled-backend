@@ -11,9 +11,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       ignoreExpiration: false,
       secretOrKey: process.env.JWT_SECRET,
     });
+
+    console.log('JwtStrategy constructor');
   }
 
   async validate(payload: any) {
+    console.log('payload', payload);
     // Add custom validation logic here, e.g., fetching the user by ID from the database
     return this.companyService.getCompanyById(payload.sub);
   }

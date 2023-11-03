@@ -9,6 +9,7 @@ import {
   UseGuards,
   HttpCode,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { EmployeeService } from '../services/employee.service';
 import { CompanyAuthMiddleware } from '../middleware/company-auth.middleware';
@@ -67,13 +68,13 @@ export class EmployeeController {
 
   @UseGuards(CompanyAuthMiddleware)
   @Get('all')
-  async getAllEmployees() {
-    const employees = await this.employeeService.getAllEmployees();
-
+  async getAllEmployees(@Req() request) {
+    const companyId = request.companyId;
+    const employees =
+      await this.employeeService.getEmployeesByCompany(companyId);
     if (!employees || employees.length === 0) {
       throw new BadRequestException('No employees found');
     }
-
     return employees;
   }
 
