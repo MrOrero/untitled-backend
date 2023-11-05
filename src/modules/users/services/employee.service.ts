@@ -28,7 +28,7 @@ export class EmployeeService {
    * @throws BadRequestException if email already exists or validation fails.
    */
   async create(
-    companyId: string,
+    companyIdFromToken: string,
     firstName: string,
     lastName: string,
     email: string,
@@ -49,7 +49,7 @@ export class EmployeeService {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newEmployeeorError = EmployeeDomain.create({
-      companyId,
+      companyId: companyIdFromToken,
       firstName,
       lastName,
       email,
