@@ -4,8 +4,9 @@ import { EmployeeRepo } from '../repository/employee.repository';
 import { EmployeeDomain } from '../domain/employee';
 import { EmployeeMap } from '../mappers/employeeMap';
 import * as bcrypt from 'bcrypt';
-import { createToken } from 'src/libs/utils/createToken';
+import { createEmployeeToken } from 'src/libs/utils/createEmployeeToken';
 import { UpdateEmployeeDto } from '../dto/UpdateEmployeeDto';
+
 @Injectable()
 export class EmployeeService {
   constructor(
@@ -14,7 +15,7 @@ export class EmployeeService {
 
   /**
    * Register a new employee.
-   * @param company - The employee's company.
+   * @param companyId - The employee's company.
    * @param firstName - The employee's first name.
    * @param lastName - The employee's last name.
    * @param email - The employee's email address.
@@ -98,7 +99,7 @@ export class EmployeeService {
       throw new BadRequestException('Invalid email or password');
     }
 
-    const token = createToken(employee.id);
+    const token = createEmployeeToken(employee.id, 'EMPLOYEE', employee.role);
     return { token, employee };
   }
 
@@ -149,10 +150,21 @@ export class EmployeeService {
     );
     return updatedEmployee;
   }
-
+  /**
+   * Delete an employee.
+   * @param id - The employee's id.
+   * @returns {Promise<{ success: boolean }>} - An object containing a success boolean.
+   * @throws BadRequestException if employee id is not provided.
+   * @throws BadRequestException if employee id is not found.
+   */
   async deleteEmployee(id: string): Promise<{ success: boolean }> {
-    const deleteResult = await this.employeeRepo.findOneAndDelete({ id });
-    return { success: deleteResult.status };
+    const deletedEmployee = await this.employeeRepo.findOneAndDelete({
+      _id: id,
+    });
+    if (deletedEmployee) {
+      return { success: true };
+    }
+    return { success: false };
   }
 
   // Helper function to compare password

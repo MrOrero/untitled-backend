@@ -8,7 +8,7 @@ import { Request } from 'express';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()
-export class CompanyAuthMiddleware implements CanActivate {
+export class EmployeeAuthMiddleware implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
     const authorizationHeader = request.headers['authorization'];
@@ -26,13 +26,10 @@ export class CompanyAuthMiddleware implements CanActivate {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
         type: string;
-        id: string;
+        role: string;
       };
 
-      if (decoded.type === 'COMPANY') {
-        // Store the company ID from the token in the request object
-        (request as any).companyId = decoded.id;
-
+      if (decoded.type === 'EMPLOYEE' && decoded.role === 'ADMIN') {
         return true;
       }
     } catch (error) {

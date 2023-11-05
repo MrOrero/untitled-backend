@@ -4,7 +4,7 @@ import { CompanyRepo } from '../repository/company.repository';
 import { CompanyDomain } from '../domain/company';
 import { CompanyMap } from '../mappers/companyMap';
 import * as bcrypt from 'bcrypt';
-import { createToken } from 'src/libs/utils/createToken';
+import { createCompanyToken } from 'src/libs/utils/createCompanyToken';
 import { UpdateCompanyDto } from '../dto/UpdateCompanyDto';
 
 @Injectable()
@@ -90,7 +90,7 @@ export class CompanyService {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const token = createToken(company.id);
+    const token = createCompanyToken(company.id, 'COMPANY');
     return { token, company };
   }
 
