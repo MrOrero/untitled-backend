@@ -21,9 +21,8 @@ export class EmployeeController {
 
   @UseGuards(CompanyAuthMiddleware)
   @Post('create')
-  async create(@Body() employeeData: any) {
+  async create(@Body() employeeData: any, @Req() request) {
     const {
-      companyId,
       firstName,
       lastName,
       email,
@@ -34,6 +33,8 @@ export class EmployeeController {
       department,
       jobTitle,
     } = employeeData;
+
+    const companyId = request.companyId;
 
     try {
       const createdEmployee = await this.employeeService.create(
