@@ -95,15 +95,6 @@ export class CompanyService {
   }
 
   /**
-   * Get all companies.
-   * @returns {Promise<any>} - An array of companies.
-   */
-  async getAllCompanies(): Promise<any> {
-    const companies = await this.companyRepo.findPaginated();
-    return companies;
-  }
-
-  /**
    * Get a company by ID.
    * @param id - The company ID.
    * @returns {Promise<Company | null>} - The company, or null if not found.
