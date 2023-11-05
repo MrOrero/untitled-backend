@@ -9,6 +9,7 @@ import { UpdateEmployeeDto } from '../dto/UpdateEmployeeDto';
 
 @Injectable()
 export class EmployeeService {
+
   constructor(
     @Inject('EmployeeRepo') private readonly employeeRepo: EmployeeRepo,
   ) {}
@@ -143,7 +144,7 @@ export class EmployeeService {
   async updateEmployee(
     id: string,
     dto: UpdateEmployeeDto,
-  ): Promise<Employee | null> {
+  ) {
     const updatedEmployee = await this.employeeRepo.findOneAndUpdate(
       { _id: id },
       dto,

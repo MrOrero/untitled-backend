@@ -6,13 +6,21 @@ import { OnboardingWorkflowMap } from '../mappers/OnboardingWorkflowMap';
 import { AddWorkFlowDto } from '../dtos/AddWorkFlowDto';
 import { InjectionTokens } from 'src/libs/common/types/enum';
 import { AddStepWorkFlowDto } from '../dtos/AddStepToWorkFlowDto';
+import { OnboardingStepsService } from 'src/modules/onborading-steps/services/onboarding-steps.service';
+import { AssignedWorkflowRepo } from '../repository/assigned-workflow.repository';
 import { EmployeeService } from 'src/modules/users/services/employee.service';
 
 @Injectable()
 export class OnboardingWorkflowService {
 
+  @Inject(InjectionTokens.AssignedWorkflowRepo)
+  private readonly assignedWorkflowRepo: AssignedWorkflowRepo;
+
   @Inject()
   private readonly employeeService: EmployeeService;
+
+  @Inject()
+  private readonly onboardingStepsService: OnboardingStepsService;
   
   constructor(@Inject(InjectionTokens.OnboardingWorkflowRepo)private readonly onboardingWorkflowRepo: OnboardingWorkflowRepo) {}
 
@@ -35,11 +43,6 @@ export class OnboardingWorkflowService {
     }
 
   }
-
-//   async getWorkflowById(id: string): Promise<OnboardingWorkflow | null> {
-//     const workflow = await this.onboardingWorkflowRepo.findOne(id);
-//     return workflow;
-//   }
 
   async getAllWorkflows(): Promise<any> {
     try {
@@ -80,11 +83,46 @@ export class OnboardingWorkflowService {
 
   async assignWorkflowToEmployee(workflowId: string, employeeId: string) {
     try {
-      return this.employeeService.updateEmployee(employeeId, { assignedWorkflow: workflowId })
+      const workflow = await this.onboardingWorkflowRepo.findById(workflowId, {
+        path: 'steps.step',
+        populate: {
+          path: 'data',
+        } 
+      });
+      const steps = await this.onboardingStepsService.createAssignedSteps(workflow.steps);
+      const assignedWorkflowId = await this.assignedWorkflowRepo.save({
+        title: workflow.title,
+        overview: workflow.overview,
+        steps: steps,
+      });
+ 
+      return this.employeeService.updateEmployee(employeeId, { assignedWorkflow: assignedWorkflowId._id.toString() });
     } catch (error) {
       console.log(error);
     }
   }
+
+  // async submitWorkflow(assignedWorkflowId: string, employeeId: string, workflowData: any) {
+  //   try {
+  //     const workflow = await this.onboardingWorkflowRepo.findById(assignedWorkflowId, {
+  //       path: 'steps.step',
+  //       populate: {
+  //         path: 'data',
+  //       } 
+  //     });
+  //     if(!workflow) {
+  //       throw new BadRequestException('Workflow not found');
+  //     }
+  //     const steps = workflow.steps;
+  //     const employee = await this.employeeService.getEmployeeById(employeeId);
+  //     if(!employee) {
+  //       throw new BadRequestException('Employee not found');
+  //     }
+
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
   // async updateWorkflow(id: string, title: string, overview: string): Promise<OnboardingWorkflow | null> {
   //   const updatedWorkflow = await this.onboardingWorkflowRepo.findOneAndUpdate(
 
