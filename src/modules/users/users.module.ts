@@ -7,8 +7,10 @@ import { CompanyService } from './services/company.service';
 import { CompanyController } from './controller/company.controller';
 import { EmployeeUploadController } from './controller/employee-upload.controller';
 import { EmployeeUploadService } from './services/employee-upload.service';
+import { OnboardingWorkflowModule } from '../onboarding-workflow/onboarding-workflow.module';
 
 @Module({
+  imports: [],
   controllers: [
     CompanyController,
     EmployeeController,

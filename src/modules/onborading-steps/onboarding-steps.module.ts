@@ -6,6 +6,7 @@ import { InjectionTokens } from 'src/libs/common/types/enum';
 import { UploadDocumentRepo } from '../steps-configuration/repository/upload-document.repository';
 import { SignedDocumentRepo } from '../steps-configuration/repository/signed-document.repository';
 import { CheckListRepo } from '../steps-configuration/repository/checklist.repository';
+import { AssignedStepsRepo } from './repository/assigned-steps.repository';
 
 const infrastructure = [
   {
@@ -23,11 +24,16 @@ const infrastructure = [
   {
     provide: InjectionTokens.CheckListRepo,
     useClass: CheckListRepo
+  },
+  {
+    provide: InjectionTokens.AssignedStepsRepo,
+    useClass: AssignedStepsRepo
   }
 ];
 
 @Module({
   controllers: [OnboardingStepController],
   providers: [OnboardingStepsService, ...infrastructure],
+    exports: [OnboardingStepsService, ...infrastructure]
 })
 export class OnboardingStepsModule {}
