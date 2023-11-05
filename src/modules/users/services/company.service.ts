@@ -4,9 +4,8 @@ import { CompanyRepo } from '../repository/company.repository';
 import { CompanyDomain } from '../domain/company';
 import { CompanyMap } from '../mappers/companyMap';
 import * as bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken';
-import { ObjectId } from 'mongodb';
-//import { createToken } from 'src/libs/utils/createToken';
+import { createCompanyToken } from 'src/libs/utils/createCompanyToken';
+import { UpdateCompanyDto } from '../dto/UpdateCompanyDto';
 
 @Injectable()
 export class CompanyService {
@@ -74,7 +73,7 @@ export class CompanyService {
     email: string,
     password: string,
   ): Promise<{ token: string; company: Company } | null> {
-    const company = await this.findByEmail(email);
+    const company = await this.companyRepo.findOne({ email });
 
     // Check if company exists
     if (!company) {
@@ -82,23 +81,16 @@ export class CompanyService {
     }
 
     // Check if password is valid
-    const passwordValid = await this.comparePassword(
+    const passwordMatch = await this.comparePassword(
       password,
       company.password,
     );
 
-    if (!passwordValid) {
+    if (!passwordMatch) {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const token = jwt.sign(
-      { sub: new ObjectId().toHexString(), type: 'COMPANY' },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: '1h',
-      },
-    );
-
+    const token = createCompanyToken(company.id, 'COMPANY');
     return { token, company };
   }
 
@@ -124,27 +116,14 @@ export class CompanyService {
   /**
    * Update a company.
    * @param id - The company ID.
-   * @param name - The company name.
-   * @param address - The company address.
-   * @param industry - The industry the company belongs to.
-   * @param email - The company's email address.
-   * @param taxId - The company's tax ID.
-   * @param password - The company's password.
+   * @param dto - The company's data.
    * @returns {Promise<Company | null>} - The updated company, or null if not found.
    */
   async updateCompany(
     id: string,
-    name: string,
-    address: string,
-    industry: string,
-    email: string,
-    taxId: string,
-    password: string,
+    dto: UpdateCompanyDto,
   ): Promise<Company | null> {
-    const updatedCompany = await this.companyRepo.findOneAndUpdate(
-      { id },
-      { name, address, industry, email, taxId, password },
-    );
+    const updatedCompany = await this.companyRepo.findOneAndUpdate({ id }, dto);
     return updatedCompany;
   }
 
