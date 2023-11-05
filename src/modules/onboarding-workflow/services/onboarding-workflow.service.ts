@@ -8,12 +8,16 @@ import { InjectionTokens } from 'src/libs/common/types/enum';
 import { AddStepWorkFlowDto } from '../dtos/AddStepToWorkFlowDto';
 import { OnboardingStepsService } from 'src/modules/onborading-steps/services/onboarding-steps.service';
 import { AssignedWorkflowRepo } from '../repository/assigned-workflow.repository';
+import { EmployeeService } from 'src/modules/users/services/employee.service';
 
 @Injectable()
 export class OnboardingWorkflowService {
 
   @Inject(InjectionTokens.AssignedWorkflowRepo)
   private readonly assignedWorkflowRepo: AssignedWorkflowRepo;
+
+  @Inject()
+  private readonly employeeService: EmployeeService;
 
   @Inject()
   private readonly onboardingStepsService: OnboardingStepsService;
@@ -92,7 +96,7 @@ export class OnboardingWorkflowService {
         steps: steps,
       });
  
-      return assignedWorkflowId['_id'];
+      return this.employeeService.updateEmployee(employeeId, { assignedWorkflow: assignedWorkflowId._id.toString() });
     } catch (error) {
       console.log(error);
     }

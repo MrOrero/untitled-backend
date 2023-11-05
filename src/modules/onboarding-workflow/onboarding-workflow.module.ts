@@ -10,7 +10,8 @@ import { OnboardingStepsModule } from '../onborading-steps/onboarding-steps.modu
 
 @Module({
   imports: [
-    OnboardingStepsModule
+    OnboardingStepsModule,
+    UsersModule
   ],
   controllers: [OnboardingWorkflowController],
   providers: [

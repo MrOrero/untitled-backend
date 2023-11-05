@@ -10,7 +10,7 @@ import { EmployeeUploadService } from './services/employee-upload.service';
 import { OnboardingWorkflowModule } from '../onboarding-workflow/onboarding-workflow.module';
 
 @Module({
-  imports: [OnboardingWorkflowModule],
+  imports: [],
   controllers: [
     CompanyController,
     EmployeeController,

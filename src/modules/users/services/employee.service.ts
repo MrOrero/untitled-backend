@@ -6,13 +6,9 @@ import { EmployeeMap } from '../mappers/employeeMap';
 import * as bcrypt from 'bcrypt';
 import { createEmployeeToken } from 'src/libs/utils/createEmployeeToken';
 import { UpdateEmployeeDto } from '../dto/UpdateEmployeeDto';
-import { OnboardingWorkflowService } from 'src/modules/onboarding-workflow/services/onboarding-workflow.service';
 
 @Injectable()
 export class EmployeeService {
-
-  @Inject()
-  private readonly onboardingWorkflowService: OnboardingWorkflowService;
 
   constructor(
     @Inject('EmployeeRepo') private readonly employeeRepo: EmployeeRepo,
@@ -149,11 +145,6 @@ export class EmployeeService {
     id: string,
     dto: UpdateEmployeeDto,
   ) {
-    if (dto.assignedWorkflow) {
-      const workflowId =  await this.onboardingWorkflowService.assignWorkflowToEmployee(dto.assignedWorkflow, id)
-      dto.assignedWorkflow = workflowId.toString();
-    }
-
     const updatedEmployee = await this.employeeRepo.findOneAndUpdate(
       { _id: id },
       dto,
