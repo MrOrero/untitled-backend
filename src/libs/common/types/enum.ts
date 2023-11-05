@@ -8,5 +8,7 @@ export enum InjectionTokens {
     OnboardingWorkflowRepo = "OnboardingWorkflowRepo",
     UploadDocumentRepo = "UploadDocumentRepo",
     SignDocumentRepo = "SignDocumentRepo",
-    CheckListRepo = "CheckListRepo"
+    CheckListRepo = "CheckListRepo",
+    AssignedStepsRepo = "AssignedStepsRepo",
+    AssignedWorkflowRepo = "AssignedWorkflowRepo",
 }

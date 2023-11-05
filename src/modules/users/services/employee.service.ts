@@ -7,9 +7,14 @@ import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
 import { UpdateEmployeeDto } from '../dto/UpdateEmployeeDto';
+import { OnboardingWorkflowService } from 'src/modules/onboarding-workflow/services/onboarding-workflow.service';
 //import { createToken } from 'src/libs/utils/createToken';
 @Injectable()
 export class EmployeeService {
+
+  @Inject()
+  private readonly onboardingWorkflowService: OnboardingWorkflowService;
+
   constructor(
     @Inject('EmployeeRepo') private readonly employeeRepo: EmployeeRepo,
   ) {}
@@ -108,7 +113,12 @@ export class EmployeeService {
   async updateEmployee(
     id: string,
     dto: UpdateEmployeeDto,
-  ): Promise<Employee | null> {
+  ) {
+    if (dto.assignedWorkflow) {
+      const workflowId =  await this.onboardingWorkflowService.assignWorkflowToEmployee(dto.assignedWorkflow, id)
+      dto.assignedWorkflow = workflowId.toString();
+    }
+
     const updatedEmployee = await this.employeeRepo.findOneAndUpdate(
       { _id: id }, 
       dto,
