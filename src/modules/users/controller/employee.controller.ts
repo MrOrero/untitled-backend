@@ -19,6 +19,7 @@ import { UpdateEmployeeDto } from '../dto/UpdateEmployeeDto';
 export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) {}
 
+  @UseGuards(CompanyAuthMiddleware)
   @Post('create')
   async create(@Body() employeeData: any) {
     const {
@@ -75,18 +76,6 @@ export class EmployeeController {
     if (!employees || employees.length === 0) {
       throw new BadRequestException('No employees found');
     }
-    return employees;
-  }
-
-  @Get('all/:companyId')
-  async getEmployeesByCompany(@Param('companyId') companyId: string) {
-    if (!companyId) {
-      throw new BadRequestException('Company Id is required');
-    }
-
-    const employees =
-      await this.employeeService.getEmployeesByCompany(companyId);
-
     return employees;
   }
 

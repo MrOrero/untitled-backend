@@ -4,7 +4,7 @@ import { EmployeeRepo } from '../repository/employee.repository';
 import { EmployeeDomain } from '../domain/employee';
 import { EmployeeMap } from '../mappers/employeeMap';
 import * as bcrypt from 'bcrypt';
-import { createToken } from 'src/libs/utils/createToken';
+import { createEmployeeToken } from 'src/libs/utils/createEmployeeToken';
 import { UpdateEmployeeDto } from '../dto/UpdateEmployeeDto';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class EmployeeService {
 
   /**
    * Register a new employee.
-   * @param company - The employee's company.
+   * @param companyId - The employee's company.
    * @param firstName - The employee's first name.
    * @param lastName - The employee's last name.
    * @param email - The employee's email address.
@@ -99,7 +99,7 @@ export class EmployeeService {
       throw new BadRequestException('Invalid email or password');
     }
 
-    const token = createToken(employee.id, 'EMPLOYEE');
+    const token = createEmployeeToken(employee.id, 'EMPLOYEE', employee.role);
     return { token, employee };
   }
 
