@@ -2,14 +2,14 @@ import {
   Controller,
   Post,
   Get,
-  Param,
   Body,
   BadRequestException,
   HttpCode,
+  Req,
 } from '@nestjs/common';
 import { UseGuards } from '@nestjs/common';
 import { CompanyService } from '../services/company.service';
-import { AuthMiddleware } from '../middleware/auth.middleware';
+import { CompanyAuthMiddleware } from '../middleware/company-auth.middleware';
 
 @Controller('companies')
 export class CompanyController {
@@ -49,22 +49,26 @@ export class CompanyController {
     }
   }
 
-  @UseGuards(AuthMiddleware)
-  @Get('all')
-  async getAllCompanies() {
-    const companies = await this.companyService.getAllCompanies();
-    return companies;
-  }
+  @Get('details')
+  @UseGuards(CompanyAuthMiddleware)
+  async getCompanyDetails(@Req() request) {
+    try {
+      // Retrieve the companyId from the token using the AuthMiddleware
+      const companyId = (request as any).companyId;
 
-  @UseGuards(AuthMiddleware)
-  @Get(':id')
-  async getCompanyById(@Param('id') companyId: string) {
-    const company = await this.companyService.getCompanyById(companyId);
+      if (!companyId) {
+        throw new BadRequestException('Company ID not found in the token');
+      }
 
-    if (!company) {
-      throw new BadRequestException(`Company with ID ${companyId} not found`);
+      const company = await this.companyService.getCompanyById(companyId);
+
+      if (!company) {
+        throw new BadRequestException(`Company with ID ${companyId} not found`);
+      }
+
+      return company;
+    } catch (error) {
+      throw new BadRequestException(error.message);
     }
-
-    return company;
   }
 }
