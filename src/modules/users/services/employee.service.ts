@@ -9,7 +9,6 @@ import { UpdateEmployeeDto } from '../dto/UpdateEmployeeDto';
 
 @Injectable()
 export class EmployeeService {
-
   constructor(
     @Inject('EmployeeRepo') private readonly employeeRepo: EmployeeRepo,
   ) {}
@@ -141,10 +140,7 @@ export class EmployeeService {
    * @param dto - The employee's data.
    * @returns {Promise<Employee | null>} - The updated employee, or null if not found.
    */
-  async updateEmployee(
-    id: string,
-    dto: UpdateEmployeeDto,
-  ) {
+  async updateEmployee(id: string, dto: UpdateEmployeeDto) {
     const updatedEmployee = await this.employeeRepo.findOneAndUpdate(
       { _id: id },
       dto,
@@ -167,6 +163,40 @@ export class EmployeeService {
     }
     return { success: false };
   }
+
+  // async resetPassword(
+  //   employeeId: string,
+  //   oldPassword: string,
+  //   newPassword: string,
+  // ) {
+  //   const employee = await this.employeeRepo.findById(employeeId);
+
+  //   if (!employee) {
+  //     throw new BadRequestException('Invalid employee');
+  //   }
+
+  //   const passwordMatch = await this.comparePassword(
+  //     oldPassword,
+  //     employee.password,
+  //   );
+
+  //   if (!passwordMatch) {
+  //     throw new BadRequestException('Invalid password');
+  //   }
+
+  //   const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  //   const updatedEmployee = await this.employeeRepo.findOneAndUpdate(
+  //     { _id: employeeId },
+  //     { password: hashedPassword },
+  //   );
+
+  //   if (!updatedEmployee) {
+  //     throw new BadRequestException('Invalid employee');
+  //   }
+
+  //   return updatedEmployee;
+  // }
 
   // Helper function to compare password
   private async comparePassword(
