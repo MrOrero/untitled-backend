@@ -68,15 +68,25 @@ export class EmployeeController {
     }
   }
 
+  // @Post('reset-password')
+  // @HttpCode(200)
+  // async resetPassword(@Body() resetPasswordData: any) {
+  //   const { email } = resetPasswordData;
+
+  //   try {
+  //     const employee = await this.employeeService.resetPassword(email);
+  //     return employee;
+  //   } catch (error) {
+  //     throw new BadRequestException(error.message);
+  //   }
+  // }
+
   @UseGuards(CompanyAuthMiddleware)
   @Get('all')
   async getAllEmployees(@Req() request) {
     const companyId = request.companyId;
     const employees =
       await this.employeeService.getEmployeesByCompany(companyId);
-    if (!employees || employees.length === 0) {
-      throw new BadRequestException('No employees found');
-    }
     return employees;
   }
 
