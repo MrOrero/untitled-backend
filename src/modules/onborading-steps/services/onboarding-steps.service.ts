@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateStepDto } from '../dtos/CreateStepDto';
 import { OnboardingStepsRepo } from '../repository/onboarding-steps.repository';
 import { InjectionTokens } from 'src/libs/common/types/enum';
@@ -132,7 +132,7 @@ export class OnboardingStepsService {
           });
         }
 
-        if(step.step.type === 'SignDocument') {
+        if (step.step.type === 'SignDocument') {
           const newSignDocument = await this.signDocumentRepo.save({
             title: step.step.data.title,
             overview: step.step.data.overview,
@@ -171,6 +171,61 @@ export class OnboardingStepsService {
       return stepIds;
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  async submitStep(step: string, documentName: string, data) {
+    try {
+      const stepData = await this.assignedStepsRepo.findById(step);
+
+      if (!stepData) {
+        throw new NotFoundException('No step found');
+      }
+
+      console.log(stepData.type);
+
+      if (stepData.type === 'UploadDocument') {
+        const updatedDocument = await this.uploadDocumentRepo.findOneAndUpdate(
+          { _id: stepData.data, 'documents.name': documentName },
+          { $set: { 'documents.$.url': data.url } },
+        );
+        return updatedDocument;
+      }
+
+      if (stepData.type === 'SignDocument') {
+        const query = { _id: stepData.data, 'documents.name': documentName }
+        const update = {};
+        
+        const signDocument = await this.signDocumentRepo.findOne(
+          query
+        );
+
+         // Check if the array is empty
+        if (Array.isArray(signDocument) && signDocument.length > 0) {
+          // If not empty, update the specific element with $set
+          update['$set'] = { 'signedDocuments.$': { name: documentName, url: data.url } };
+        } else {
+          // If empty, set the entire array
+          update['$set'] = { 'signedDocuments': [{ name: documentName, url: data.url }] };
+        }
+
+        const updatedDocument = await this.signDocumentRepo.findOneAndUpdate(
+          query,
+          update,
+        );
+        return updatedDocument;
+      }
+
+      if (stepData.type === 'CheckList') {
+        const updatedDocument = await this.checkListRepo.findOneAndUpdate(
+          { _id: stepData.data, 'items.label': documentName },
+          { $set: { 'items.$.completed': true } },
+        );
+        return updatedDocument;
+      }
+    } catch (error) {
+      console.log(error);
+      throw error;
     }
   }
 

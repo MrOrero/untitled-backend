@@ -1,4 +1,4 @@
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 export abstract class AbstractRepo<T> {
   constructor(private readonly model: Model<T>) {}
@@ -19,7 +19,7 @@ export abstract class AbstractRepo<T> {
     return entity;
   }
 
-  async findById(id: string, relation?: any) {
+  async findById(id: string | Types.ObjectId, relation?: any) {
     const entity = await this.model.findById(id).populate(relation).exec();
     return entity;
   }

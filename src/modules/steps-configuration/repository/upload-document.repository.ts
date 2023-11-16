@@ -4,6 +4,8 @@ import UploadDocumentModel, { UploadDocument } from "../models/upload-document.m
 export class UploadDocumentRepo extends AbstractRepo<UploadDocument>{
     constructor() {
         super(UploadDocumentModel.getModel());
+
+          
       }
     
 }

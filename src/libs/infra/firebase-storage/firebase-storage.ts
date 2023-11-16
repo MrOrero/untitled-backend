@@ -57,13 +57,13 @@ export class FirebaseStorage {
 
   static uploadFiles = async (docs: Express.Multer.File[]) => {
     try {
-      const documentDetails = [];
+      const documentDetails : {name: string, url: string}[] = [];
       for (const doc of docs) {
         const details = await FirebaseStorage.uploadFile(doc);
         documentDetails.push(details);
       }
 
-      return documentDetails;
+      return documentDetails ;
     } catch (error) {
       console.log(error);
       throw error;
