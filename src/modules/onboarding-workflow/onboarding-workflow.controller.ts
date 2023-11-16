@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AddWorkFlowDto } from './dtos/AddWorkFlowDto';
 import { OnboardingWorkflowService } from './services/onboarding-workflow.service';
 import { AddStepWorkFlowDto } from './dtos/AddStepToWorkFlowDto';
 import { AssignWorkflowToEmployeeDto } from './dtos/AssignWorkflowToUser';
 import { EmployeeAuthMiddleware } from '../users/middleware/employee-auth.middleware';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { CreateSignDocumentStepDto } from '../onborading-steps/dtos/CreateSignedDocumentStepDto';
 @Controller('onboarding-workflow')
 export class OnboardingWorkflowController {
   constructor(
@@ -34,6 +36,30 @@ export class OnboardingWorkflowController {
     const res = await this.onboardingWorkflowService.assignWorkflowToEmployee(
       dto.workflowId,
       dto.employeeId,
+    );
+    return res;
+  }
+
+  @Get('/assign/:employeeId')
+  async getAssignedWorkflows(@Param('employeeId') employeeId: string) {
+    const res =
+      await this.onboardingWorkflowService.getAssignedWorkflowById(employeeId);
+    return res;
+  }
+
+  @Post('/submit-step/:workflowId/:stepId')
+  @UseInterceptors(FilesInterceptor('docs'))
+  async submitWorkflowStep(
+    @UploadedFiles() docs: Express.Multer.File[],
+    @Param('workflowId') workflowId: string,
+    @Param('stepId') stepId: string,
+    @Body() dto: any
+  ) {
+    const res = await this.onboardingWorkflowService.submitStep(
+      workflowId,
+      stepId,
+      docs,
+      dto,
     );
     return res;
   }
