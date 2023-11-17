@@ -59,6 +59,7 @@ export class EmployeeService {
       role,
       department,
       jobTitle,
+      hasChangedPassword: false,
     });
 
     if (newEmployeeorError.isFailure) {
@@ -97,6 +98,10 @@ export class EmployeeService {
     );
     if (!passwordMatch) {
       throw new BadRequestException('Invalid email or password');
+    }
+
+    if (!employee.hasChangedPassword) {
+      return { token: null, employee: null };
     }
 
     const token = createEmployeeToken(employee.id, 'EMPLOYEE', employee.role);
@@ -188,6 +193,8 @@ export class EmployeeService {
     // Hash and update the new password
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
     employee.password = hashedNewPassword;
+
+    employee.hasChangedPassword = true;
 
     // Save the updated employee
     await this.employeeRepo.save(employee);

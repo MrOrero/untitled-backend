@@ -12,6 +12,7 @@ export interface Employee {
   department: string;
   workflowId?: string;
   jobTitle: string;
+  hasChangedPassword?: boolean;
 }
 
 class EmployeeModel {
@@ -58,6 +59,10 @@ class EmployeeModel {
       jobTitle: {
         type: String,
         required: true,
+      },
+      hasChangedPassword: {
+        type: Boolean,
+        default: false,
       },
       assignedWorkflow: {
         type: Schema.Types.ObjectId,
