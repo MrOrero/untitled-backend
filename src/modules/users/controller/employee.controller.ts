@@ -68,19 +68,6 @@ export class EmployeeController {
     }
   }
 
-  // @Post('reset-password')
-  // @HttpCode(200)
-  // async resetPassword(@Body() resetPasswordData: any) {
-  //   const { email } = resetPasswordData;
-
-  //   try {
-  //     const employee = await this.employeeService.resetPassword(email);
-  //     return employee;
-  //   } catch (error) {
-  //     throw new BadRequestException(error.message);
-  //   }
-  // }
-
   @UseGuards(CompanyAuthMiddleware)
   @Get('all')
   async getAllEmployees(@Req() request) {
@@ -131,5 +118,25 @@ export class EmployeeController {
     }
 
     return deletedEmployee;
+  }
+
+  @UseGuards(CompanyAuthMiddleware)
+  @Put('reset-password/:id')
+  async resetPassword(
+    @Param('id') employeeId: string,
+    @Body() resetPasswordData: any,
+  ) {
+    const { oldPassword, newPassword } = resetPasswordData;
+
+    try {
+      const result = await this.employeeService.resetPassword(
+        employeeId,
+        oldPassword,
+        newPassword,
+      );
+      return result;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }
