@@ -100,10 +100,6 @@ export class EmployeeService {
       throw new BadRequestException('Invalid email or password');
     }
 
-    if (!employee.hasChangedPassword) {
-      return { token: null, employee: null };
-    }
-
     const token = createEmployeeToken(employee.id, 'EMPLOYEE', employee.role);
     return { token, employee };
   }
