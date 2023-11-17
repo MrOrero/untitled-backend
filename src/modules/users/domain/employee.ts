@@ -14,6 +14,7 @@ export interface EmployeeProps {
   role: string;
   department: string;
   jobTitle: string;
+  hasChangedPassword?: boolean;
 }
 
 export class EmployeeValidation {
@@ -105,6 +106,10 @@ export class EmployeeDomain extends BaseAggregateRoot<EmployeeProps> {
 
   get jobTitle(): string {
     return this.props.jobTitle;
+  }
+
+  get hasChangedPassword(): boolean {
+    return this.props.hasChangedPassword;
   }
 
   public static create(props: EmployeeProps): Result<EmployeeDomain> {
