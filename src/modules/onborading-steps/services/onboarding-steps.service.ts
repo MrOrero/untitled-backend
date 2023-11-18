@@ -9,6 +9,7 @@ import { CreateSignDocumentStepDto } from '../dtos/CreateSignedDocumentStepDto';
 import { CheckListRepo } from 'src/modules/steps-configuration/repository/checklist.repository';
 import { AssignedStepsRepo } from '../repository/assigned-steps.repository';
 import { OnboardingWorkflow } from 'src/modules/onboarding-workflow/model/onboarding-workflow.model';
+import { Schema, Types } from 'mongoose';
 
 @Injectable()
 export class OnboardingStepsService {
@@ -60,6 +61,11 @@ export class OnboardingStepsService {
       if (dto.type === 'UploadDocument') {
         console.log(id);
         const documentStep = await this.onboardingStepsRepo.findById(id);
+
+        if(!documentStep){
+          throw new NotFoundException('Step Not Found')
+        }
+        
         return this.uploadDocumentRepo.findOneAndUpdate(
           { _id: documentStep.data },
           dto.data,
@@ -68,6 +74,11 @@ export class OnboardingStepsService {
 
       if (dto.type === 'CheckList') {
         const documentStep = await this.onboardingStepsRepo.findById(id);
+
+        if(!documentStep){
+          throw new NotFoundException('Step Not Found')
+        }
+        console.log(documentStep)
         return this.checkListRepo.findOneAndUpdate(
           { _id: documentStep.data },
           dto.data,
@@ -109,8 +120,28 @@ export class OnboardingStepsService {
       'data',
     );
     return steps;
+  } 
+
+  async deleteStep(id: string) {
+    return this.onboardingStepsRepo.findOneAndDelete({_id: id})
   }
 
+  async createAssignedStepFromOnboardingStep(id: string | Types.ObjectId, order){
+    try {
+      const step = await this.onboardingStepsRepo.findById(id, 'data')
+      if(!step){
+        throw new NotFoundException('Step Not Found')
+      }
+        return this.createAssignedSteps([
+          {
+            step,
+            order
+          },
+        ])
+    } catch (error) {
+      throw error
+    }
+  }
   async createAssignedSteps(steps) {
     try {
       let stepIds = [];
@@ -171,6 +202,7 @@ export class OnboardingStepsService {
       return stepIds;
     } catch (error) {
       console.log(error);
+      throw error
     }
   }
 

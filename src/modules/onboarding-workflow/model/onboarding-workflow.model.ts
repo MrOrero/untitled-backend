@@ -1,7 +1,7 @@
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model, Document, Types } from 'mongoose';
 
 export interface OnboardingStepInfo {
-    step: Schema.Types.ObjectId;
+    step: Types.ObjectId;
     order: number;
 }
 

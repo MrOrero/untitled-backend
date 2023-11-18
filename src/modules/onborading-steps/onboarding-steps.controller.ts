@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     Param,
     Post,
@@ -29,6 +30,12 @@ import { CreateSignDocumentStepDto } from "./dtos/CreateSignedDocumentStepDto";
     async updateStep(@Body() dto: CreateStepDto, @Param('id') id: string) {
       const res = await this.onboardingStepService.updateStep(id, dto);
       return res;
+    }
+
+    @Delete('/:id')
+    async deleteStep(@Param('id') id: string){
+      const res = await this.onboardingStepService.deleteStep(id)
+      return res
     }
 
     @Post("/sign")

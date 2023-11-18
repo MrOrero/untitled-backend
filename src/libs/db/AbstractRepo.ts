@@ -1,4 +1,4 @@
-import { Model, Types } from 'mongoose';
+import { FilterQuery, Model, Types, UpdateQuery } from 'mongoose';
 
 export abstract class AbstractRepo<T> {
   constructor(private readonly model: Model<T>) {}
@@ -9,12 +9,12 @@ export abstract class AbstractRepo<T> {
     return savedEntity;
   }
 
-  async exists(where: Record<string, any>): Promise<boolean> {
+  async exists(where: FilterQuery<T>): Promise<boolean> {
     const count = await this.model.countDocuments(where);
     return count > 0;
   }
 
-  async findOne(where: Record<string, any>) {
+  async findOne(where: FilterQuery<T>) {
     const entity = await this.model.findOne(where).exec();
     return entity;
   }
@@ -25,8 +25,8 @@ export abstract class AbstractRepo<T> {
   }
 
   async findOneAndUpdate(
-    where: Record<string, any>,
-    partialEntity: Record<string, any>,
+    where: FilterQuery<T>,
+    partialEntity: UpdateQuery<T>
   ) {
     const updatedEntity = await this.model
       .findOneAndUpdate(where, partialEntity, { new: true })
@@ -41,7 +41,7 @@ export abstract class AbstractRepo<T> {
   async findPaginated(
     pageSize = 10,
     currentPage = 1,
-    where: Record<string, any> = {},
+    where: FilterQuery<T> = {},
     relation?: any,
   ): Promise<{
     data: T[];
@@ -67,12 +67,12 @@ export abstract class AbstractRepo<T> {
     };
   }
 
-  async find(where: Record<string, any>, order: Record<string, any> = {}) {
+  async find(where: FilterQuery<T>, order: Record<string, any> = {}) {
     return this.model.find(where).sort(order).exec();
   }
 
   async findOneAndDelete(
-    where: Record<string, any>,
+    where: FilterQuery<T>,
   ): Promise<{ status: boolean }> {
     const res = await this.model.deleteOne(where).exec();
     return {
