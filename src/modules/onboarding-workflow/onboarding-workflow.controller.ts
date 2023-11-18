@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AddWorkFlowDto } from './dtos/AddWorkFlowDto';
 import { OnboardingWorkflowService } from './services/onboarding-workflow.service';
 import { AddStepWorkFlowDto } from './dtos/AddStepToWorkFlowDto';
@@ -6,6 +6,7 @@ import { AssignWorkflowToEmployeeDto } from './dtos/AssignWorkflowToUser';
 import { EmployeeAuthMiddleware } from '../users/middleware/employee-auth.middleware';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { CreateSignDocumentStepDto } from '../onborading-steps/dtos/CreateSignedDocumentStepDto';
+import { AddStepToAssignedWorkFlowDto } from './dtos/AddStepToAssignedWorkflowDto';
 @Controller('onboarding-workflow')
 export class OnboardingWorkflowController {
   constructor(
@@ -28,6 +29,12 @@ export class OnboardingWorkflowController {
   async getWorkflowById(@Param('id') id: string) {
     const res = await this.onboardingWorkflowService.getWorkflowById(id);
     return res;
+  }
+
+  @Delete('/:id')
+  async deleteWorkflow(@Param('id') id: string) {
+    const res = await this.onboardingWorkflowService.deleteWorkflow(id)
+    return res
   }
 
   @UseGuards(EmployeeAuthMiddleware)
@@ -59,6 +66,18 @@ export class OnboardingWorkflowController {
       workflowId,
       stepId,
       docs,
+      dto,
+    );
+    return res;
+  }
+
+  @Post('/assign/add-step/:workflowId')
+  async addStepToAssignedWorkflow(
+    @Body() dto: AddStepToAssignedWorkFlowDto,
+    @Param('workflowId') workflowId: string,
+  ) {
+    const res = await this.onboardingWorkflowService.addStepToAssignedWorkflow(
+      workflowId,
       dto,
     );
     return res;
