@@ -14,6 +14,7 @@ export class EmployeeMap {
       role: employee.role,
       department: employee.department,
       jobTitle: employee.jobTitle,
+      hasChangedPassword: employee.hasChangedPassword,
     };
   }
 }

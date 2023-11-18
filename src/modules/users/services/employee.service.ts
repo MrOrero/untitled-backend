@@ -59,6 +59,7 @@ export class EmployeeService {
       role,
       department,
       jobTitle,
+      hasChangedPassword: false,
     });
 
     if (newEmployeeorError.isFailure) {
@@ -164,39 +165,38 @@ export class EmployeeService {
     return { success: false };
   }
 
-  // async resetPassword(
-  //   employeeId: string,
-  //   oldPassword: string,
-  //   newPassword: string,
-  // ) {
-  //   const employee = await this.employeeRepo.findById(employeeId);
+  async resetPassword(
+    employeeId: string,
+    oldPassword: string,
+    newPassword: string,
+  ) {
+    const employee = await this.employeeRepo.findById(employeeId);
 
-  //   if (!employee) {
-  //     throw new BadRequestException('Invalid employee');
-  //   }
+    if (!employee) {
+      throw new BadRequestException(`Employee with ID ${employeeId} not found`);
+    }
 
-  //   const passwordMatch = await this.comparePassword(
-  //     oldPassword,
-  //     employee.password,
-  //   );
+    // Check if old password is valid
+    const isOldPasswordValid = await this.comparePassword(
+      oldPassword,
+      employee.password,
+    );
 
-  //   if (!passwordMatch) {
-  //     throw new BadRequestException('Invalid password');
-  //   }
+    if (!isOldPasswordValid) {
+      throw new BadRequestException('Invalid old password');
+    }
 
-  //   const hashedPassword = await bcrypt.hash(newPassword, 10);
+    // Hash and update the new password
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    employee.password = hashedNewPassword;
 
-  //   const updatedEmployee = await this.employeeRepo.findOneAndUpdate(
-  //     { _id: employeeId },
-  //     { password: hashedPassword },
-  //   );
+    employee.hasChangedPassword = true;
 
-  //   if (!updatedEmployee) {
-  //     throw new BadRequestException('Invalid employee');
-  //   }
+    // Save the updated employee
+    await this.employeeRepo.save(employee);
 
-  //   return updatedEmployee;
-  // }
+    return { success: true };
+  }
 
   // Helper function to compare password
   private async comparePassword(
