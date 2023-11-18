@@ -14,6 +14,7 @@ import {
 import { EmployeeService } from '../services/employee.service';
 import { CompanyAuthMiddleware } from '../middleware/company-auth.middleware';
 import { UpdateEmployeeDto } from '../dto/UpdateEmployeeDto';
+import { EmployeeAuthMiddleware } from '../middleware/employee-auth.middleware';
 
 @Controller('employees')
 export class EmployeeController {
@@ -107,6 +108,34 @@ export class EmployeeController {
     return updatedEmployee;
   }
 
+  @UseGuards(EmployeeAuthMiddleware)
+  @HttpCode(200)
+  @Post('reset-password')
+  async resetPassword(@Req() request, @Body() resetPasswordData: any) {
+    const { oldPassword, newPassword, confirmNewPassword } = resetPasswordData;
+
+    const employeeId = request.employeeId;
+
+    try {
+      // Check if the new password matches the confirmation password
+      if (newPassword !== confirmNewPassword) {
+        throw new BadRequestException(
+          'New password and confirmation password do not match',
+        );
+      }
+
+      const result = await this.employeeService.resetPassword(
+        employeeId,
+        oldPassword,
+        newPassword,
+        confirmNewPassword,
+      );
+      return result;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
   @UseGuards(CompanyAuthMiddleware)
   @Delete(':id')
   async deleteEmployee(@Param('id') employeeId: string) {
@@ -118,25 +147,5 @@ export class EmployeeController {
     }
 
     return deletedEmployee;
-  }
-
-  @UseGuards(CompanyAuthMiddleware)
-  @Put('reset-password/:id')
-  async resetPassword(
-    @Param('id') employeeId: string,
-    @Body() resetPasswordData: any,
-  ) {
-    const { oldPassword, newPassword } = resetPasswordData;
-
-    try {
-      const result = await this.employeeService.resetPassword(
-        employeeId,
-        oldPassword,
-        newPassword,
-      );
-      return result;
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
   }
 }

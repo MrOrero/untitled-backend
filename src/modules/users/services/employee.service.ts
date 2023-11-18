@@ -169,6 +169,7 @@ export class EmployeeService {
     employeeId: string,
     oldPassword: string,
     newPassword: string,
+    confirmNewPassword: string,
   ) {
     const employee = await this.employeeRepo.findById(employeeId);
 
@@ -184,6 +185,13 @@ export class EmployeeService {
 
     if (!isOldPasswordValid) {
       throw new BadRequestException('Invalid old password');
+    }
+
+    // Check if the new password matches the confirmation password
+    if (newPassword !== confirmNewPassword) {
+      throw new BadRequestException(
+        'New password and confirmation password do not match',
+      );
     }
 
     // Hash and update the new password
