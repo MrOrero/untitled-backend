@@ -112,23 +112,15 @@ export class EmployeeController {
   @HttpCode(200)
   @Post('reset-password')
   async resetPassword(@Req() request, @Body() resetPasswordData: any) {
-    const { oldPassword, newPassword, confirmNewPassword } = resetPasswordData;
+    const { oldPassword, newPassword } = resetPasswordData;
 
     const employeeId = request.employeeId;
 
     try {
-      // Check if the new password matches the confirmation password
-      if (newPassword !== confirmNewPassword) {
-        throw new BadRequestException(
-          'New password and confirmation password do not match',
-        );
-      }
-
       const result = await this.employeeService.resetPassword(
         employeeId,
         oldPassword,
         newPassword,
-        confirmNewPassword,
       );
       return result;
     } catch (error) {
