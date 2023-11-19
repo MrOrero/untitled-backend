@@ -49,6 +49,25 @@ export class CompanyController {
     }
   }
 
+  @UseGuards(CompanyAuthMiddleware)
+  @HttpCode(200)
+  @Post('reset-password')
+  async resetPassword(@Body() resetPasswordData: any, @Req() request) {
+    const { oldPassword, newPassword } = resetPasswordData;
+
+    try {
+      const companyId = request.companyId;
+      const result = await this.companyService.resetPassword(
+        companyId,
+        oldPassword,
+        newPassword,
+      );
+      return result;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
   @Get('details')
   @UseGuards(CompanyAuthMiddleware)
   async getCompanyDetails(@Req() request) {

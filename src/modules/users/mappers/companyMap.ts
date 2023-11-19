@@ -10,6 +10,7 @@ export class CompanyMap {
       email: company.email,
       taxId: company.taxId,
       password: company.password,
+      hasChangedPassword: company.hasChangedPassword,
     };
   }
 }

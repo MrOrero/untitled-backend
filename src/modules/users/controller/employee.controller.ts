@@ -14,6 +14,7 @@ import {
 import { EmployeeService } from '../services/employee.service';
 import { CompanyAuthMiddleware } from '../middleware/company-auth.middleware';
 import { UpdateEmployeeDto } from '../dto/UpdateEmployeeDto';
+import { EmployeeAuthMiddleware } from '../middleware/employee-auth.middleware';
 
 @Controller('employees')
 export class EmployeeController {
@@ -107,26 +108,13 @@ export class EmployeeController {
     return updatedEmployee;
   }
 
-  @UseGuards(CompanyAuthMiddleware)
-  @Delete(':id')
-  async deleteEmployee(@Param('id') employeeId: string) {
-    const deletedEmployee =
-      await this.employeeService.deleteEmployee(employeeId);
-
-    if (!deletedEmployee) {
-      throw new BadRequestException(`Employee with ID ${employeeId} not found`);
-    }
-
-    return deletedEmployee;
-  }
-
-  @UseGuards(CompanyAuthMiddleware)
-  @Put('reset-password/:id')
-  async resetPassword(
-    @Param('id') employeeId: string,
-    @Body() resetPasswordData: any,
-  ) {
+  @UseGuards(EmployeeAuthMiddleware)
+  @HttpCode(200)
+  @Post('reset-password')
+  async resetPassword(@Req() request, @Body() resetPasswordData: any) {
     const { oldPassword, newPassword } = resetPasswordData;
+
+    const employeeId = request.employeeId;
 
     try {
       const result = await this.employeeService.resetPassword(
@@ -138,5 +126,18 @@ export class EmployeeController {
     } catch (error) {
       throw new BadRequestException(error.message);
     }
+  }
+
+  @UseGuards(CompanyAuthMiddleware)
+  @Delete(':id')
+  async deleteEmployee(@Param('id') employeeId: string) {
+    const deletedEmployee =
+      await this.employeeService.deleteEmployee(employeeId);
+
+    if (!deletedEmployee) {
+      throw new BadRequestException(`Employee with ID ${employeeId} not found`);
+    }
+
+    return deletedEmployee;
   }
 }

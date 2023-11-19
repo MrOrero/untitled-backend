@@ -27,9 +27,11 @@ export class EmployeeAuthMiddleware implements CanActivate {
       const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
         type: string;
         role: string;
+        id: string;
       };
 
-      if (decoded.type === 'EMPLOYEE' && decoded.role === 'ADMIN') {
+      if (decoded.type === 'EMPLOYEE') {
+        (request as any).employeeId = decoded.id;
         return true;
       }
     } catch (error) {

@@ -7,6 +7,7 @@ export interface Company {
   email: string;
   taxId: string;
   password: string;
+  hasChangedPassword?: boolean;
 }
 
 class CompanyModel {
@@ -35,6 +36,10 @@ class CompanyModel {
       password: {
         type: String,
         required: true,
+      },
+      hasChangedPassword: {
+        type: Boolean,
+        default: false,
       },
     },
     {
