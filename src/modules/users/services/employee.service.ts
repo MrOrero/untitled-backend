@@ -165,6 +165,13 @@ export class EmployeeService {
     return { success: false };
   }
 
+  /**
+   * Reset a employee's password.
+   * @param employeeId - The employee ID.
+   * @param oldPassword - The employee's old password.
+   * @param newPassword - The employee's new password.
+   * @returns {Promise<{ success: boolean }>} - An object containing a success boolean.
+   */
   async resetPassword(
     employeeId: string,
     oldPassword: string,
