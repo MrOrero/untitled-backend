@@ -37,7 +37,6 @@ export class OnboardingWorkflowController {
     return res
   }
 
-  @UseGuards(EmployeeAuthMiddleware)
   @Post('assign')
   async assignWorkflowToEmployee(@Body() dto: AssignWorkflowToEmployeeDto) {
     const res = await this.onboardingWorkflowService.assignWorkflowToEmployee(
