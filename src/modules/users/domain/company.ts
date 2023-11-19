@@ -10,6 +10,7 @@ export interface CompanyProps {
   email: string;
   taxId: string;
   password: string;
+  hasChangedPassword?: boolean;
 }
 
 export class CompanyValidation {
@@ -69,6 +70,10 @@ export class CompanyDomain extends BaseAggregateRoot<CompanyProps> {
 
   get password(): string {
     return this.props.password;
+  }
+
+  get hasChangedPassword(): boolean {
+    return this.props.hasChangedPassword;
   }
 
   public static create(props: CompanyProps): Result<CompanyDomain> {

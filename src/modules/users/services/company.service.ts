@@ -49,6 +49,7 @@ export class CompanyService {
       email,
       taxId,
       password: hashedPassword,
+      hasChangedPassword: false,
     });
 
     if (newCompanyorError.isFailure) {
@@ -118,10 +119,44 @@ export class CompanyService {
     return updatedCompany;
   }
 
-  // Function to find company by email
-  async findByEmail(email: string): Promise<Company | null> {
-    const company = await this.companyRepo.findOne({ email });
-    return company;
+  /**
+   * Reset a company's password.
+   * @param companyId - The company's ID.
+   * @param oldPassword - The company's old password.
+   * @param newPassword - The company's new password.
+   * @returns {Promise<{ success: boolean }>} - An object containing a success boolean.
+   */
+  async resetPassword(
+    companyId: string,
+    oldPassword: string,
+    newPassword: string,
+  ) {
+    const company = await this.companyRepo.findById(companyId);
+
+    if (!company) {
+      throw new BadRequestException(`Company with ID ${companyId} not found`);
+    }
+
+    // Check if old password is valid
+    const isOldPasswordValid = await this.comparePassword(
+      oldPassword,
+      company.password,
+    );
+
+    if (!isOldPasswordValid) {
+      throw new BadRequestException('Invalid old password');
+    }
+
+    // Hash new password
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    company.password = hashedNewPassword;
+
+    company.hasChangedPassword = true;
+
+    // Save the updated company
+    await this.companyRepo.save(company);
+
+    return { success: true };
   }
 
   // Function to compare password
@@ -130,5 +165,11 @@ export class CompanyService {
     actualPassword: string,
   ): Promise<boolean> {
     return bcrypt.compare(enteredPassword, actualPassword);
+  }
+
+  // Function to find company by email
+  async findByEmail(email: string): Promise<Company | null> {
+    const company = await this.companyRepo.findOne({ email });
+    return company;
   }
 }
