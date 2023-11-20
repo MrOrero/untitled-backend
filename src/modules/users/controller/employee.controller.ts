@@ -78,17 +78,17 @@ export class EmployeeController {
     return employees;
   }
 
-  @UseGuards(CompanyAuthMiddleware)
-  @Get(':id')
-  async getEmployeeById(@Param('id') employeeId: string) {
-    const employee = await this.employeeService.getEmployeeById(employeeId);
+  // @UseGuards(CompanyAuthMiddleware)
+  // @Get(':id')
+  // async getEmployeeById(@Param('id') employeeId: string) {
+  //   const employee = await this.employeeService.getEmployeeById(employeeId);
 
-    if (!employee) {
-      throw new BadRequestException(`Employee with ID ${employeeId} not found`);
-    }
+  //   if (!employee) {
+  //     throw new BadRequestException(`Employee with ID ${employeeId} not found`);
+  //   }
 
-    return employee;
-  }
+  //   return employee;
+  // }
 
   @UseGuards(CompanyAuthMiddleware)
   @Put(':id')
@@ -123,6 +123,30 @@ export class EmployeeController {
         newPassword,
       );
       return result;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  @Get('details')
+  @UseGuards(EmployeeAuthMiddleware)
+  async getEmployeeDetails(@Req() request) {
+    try {
+      // Retrieve the employeeId from the token using the AuthMiddleware
+      const employeeId = (request as any).employeeId;
+      if (!employeeId) {
+        throw new BadRequestException('Employee ID not found in the token');
+      }
+
+      const employee = await this.employeeService.getEmployeeById(employeeId);
+
+      if (!employee) {
+        throw new BadRequestException(
+          `Employee with ID ${employeeId} not found`,
+        );
+      }
+
+      return employee;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
