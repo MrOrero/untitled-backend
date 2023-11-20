@@ -91,6 +91,43 @@ export class OnboardingStepsService {
     }
   }
 
+  async updateAssignedStep(id: string, dto: CreateStepDto) {
+    console.log(dto)
+    console.log(id)
+    try {
+      if (dto.type === 'UploadDocument') {
+        const documentStep = await this.assignedStepsRepo.findById(id);
+
+        if(!documentStep){
+          throw new NotFoundException('Step Not Found')
+        }
+        
+        return this.uploadDocumentRepo.findOneAndUpdate(
+          { _id: documentStep.data },
+          dto.data,
+        );
+      }
+
+      if (dto.type === 'CheckList') {
+        const documentStep = await this.assignedStepsRepo.findById(id);
+
+        if(!documentStep){
+          throw new NotFoundException('Step Not Found')
+        }
+        console.log(documentStep)
+        return this.checkListRepo.findOneAndUpdate(
+          { _id: documentStep.data },
+          dto.data,
+        );
+      }
+
+      return;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
   async createSignDocumentStep(
     docs: Express.Multer.File[],
     dto: CreateSignDocumentStepDto,
