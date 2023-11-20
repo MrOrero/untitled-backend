@@ -78,18 +78,6 @@ export class EmployeeController {
     return employees;
   }
 
-  // @UseGuards(CompanyAuthMiddleware)
-  // @Get(':id')
-  // async getEmployeeById(@Param('id') employeeId: string) {
-  //   const employee = await this.employeeService.getEmployeeById(employeeId);
-
-  //   if (!employee) {
-  //     throw new BadRequestException(`Employee with ID ${employeeId} not found`);
-  //   }
-
-  //   return employee;
-  // }
-
   @UseGuards(CompanyAuthMiddleware)
   @Put(':id')
   async updateEmployee(
@@ -150,6 +138,18 @@ export class EmployeeController {
     } catch (error) {
       throw new BadRequestException(error.message);
     }
+  }
+
+  @UseGuards(CompanyAuthMiddleware)
+  @Get(':id')
+  async getEmployeeById(@Param('id') employeeId: string) {
+    const employee = await this.employeeService.getEmployeeById(employeeId);
+
+    if (!employee) {
+      throw new BadRequestException(`Employee with ID ${employeeId} not found`);
+    }
+
+    return employee;
   }
 
   @UseGuards(CompanyAuthMiddleware)
