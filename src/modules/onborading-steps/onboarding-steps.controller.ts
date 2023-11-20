@@ -48,6 +48,12 @@ import { CreateSignDocumentStepDto } from "./dtos/CreateSignedDocumentStepDto";
       return res;
     }
 
+    @Put("/assign/:id")
+    async updateAssignedStep(@Body() dto: CreateStepDto, @Param('id') id: string) {
+      const res = await this.onboardingStepService.updateAssignedStep(id, dto);
+      return res;
+    }
+
     @Get("/")
     async getAllSteps() {
       const res = await this.onboardingStepService.getAllSteps();
