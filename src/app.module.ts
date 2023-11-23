@@ -7,6 +7,7 @@ import { OnboardingStepsModule } from './modules/onborading-steps/onboarding-ste
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtStrategy } from './modules/auth/strategies/jwt.strategy';
+import { RepositoryModule } from './modules/repository/repository.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { JwtStrategy } from './modules/auth/strategies/jwt.strategy';
     OnboardingStepsModule,
     UsersModule,
     AuthModule,
+    RepositoryModule
   ],
   controllers: [AppController],
   providers: [AppService, JwtStrategy],

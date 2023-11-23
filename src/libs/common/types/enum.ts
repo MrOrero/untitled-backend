@@ -11,4 +11,5 @@ export enum InjectionTokens {
     CheckListRepo = "CheckListRepo",
     AssignedStepsRepo = "AssignedStepsRepo",
     AssignedWorkflowRepo = "AssignedWorkflowRepo",
+    RepositoryRepo = "RepositoryRepo",
 }
